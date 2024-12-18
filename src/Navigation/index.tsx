@@ -1,12 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { HomeScreen, StatusBoardScreen, MyPageScreen } from '../Screens';
-import Color from '../Components/Common/Color';
+import Color from '../Common/Color';
+import Text from '../Components/Common/Text';
 
-import { HomeFill, HomePrimary, StatusBoardFill, StatusBoardPrimary, MyFill, MyPrimary } from '../assets/icons';
+import { HomeFill, HomePrimary, StatusBoardFill, StatusBoardPrimary, MyFill, MyPrimary } from '../Assets/icons';
 
 const Tab = createBottomTabNavigator();
 
@@ -17,12 +17,10 @@ function Navigation() {
         screenOptions={({ route }) => ({
           tabBarLabel: ({ focused }) => (
             <Text
-              style={{
-                color: focused ? Color.black : Color.gray3,
-                fontWeight: focused ? '600' : '400',
-                padding: 0,
-                margin: 0,
-              }}
+              fontSize={10}
+              lineHeight={17}
+              fontWeight={focused ? 'bold' : '400'}
+              color={focused ? Color.black : Color.gray3}
             >
               {route.name}
             </Text>
@@ -49,7 +47,5 @@ function Navigation() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({});
 
 export default Navigation;
