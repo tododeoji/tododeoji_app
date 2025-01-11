@@ -9,6 +9,7 @@ import { Text } from '../Components/Common';
 
 import { HomeFill, HomePrimary, StatusBoardFill, StatusBoardPrimary, MyFill, MyPrimary } from '../assets/icons';
 import { MyPageStackScreen } from './Stack/Mypage';
+import { FontFamily, FontStyle } from '../Common/Font';
 
 const Tab = createBottomTabNavigator();
 
@@ -19,9 +20,8 @@ function Navigation() {
         screenOptions={({ route }) => ({
           tabBarLabel: ({ focused }) => (
             <Text
-              fontSize={10}
-              lineHeight={17}
-              fontWeight={focused ? 'bold' : '400'}
+              fontFamily={FontFamily.BOLD}
+              fontStyle={FontStyle.caption2}
               color={focused ? Color.black : Color.gray3}
             >
               {route.name}
