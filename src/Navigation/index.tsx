@@ -2,11 +2,14 @@ import React from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { HomeScreen, StatusBoardScreen, MyPageScreen } from '../Screens';
-import Color from '../Common/Color';
-import Text from '../Components/Common/Text';
 
-import { HomeFill, HomePrimary, StatusBoardFill, StatusBoardPrimary, MyFill, MyPrimary } from '../Assets/icons';
+import { HomeScreen, StatusBoardScreen } from '../Screens';
+import Color from '../Common/Color';
+import { Text } from '../Components/Common';
+
+import { HomeFill, HomePrimary, StatusBoardFill, StatusBoardPrimary, MyFill, MyPrimary } from '../assets/icons';
+import { MyPageStackScreen } from './Stack/Mypage';
+import { FontFamily, FontStyle } from '../Common/Font';
 
 const Tab = createBottomTabNavigator();
 
@@ -17,9 +20,8 @@ function Navigation() {
         screenOptions={({ route }) => ({
           tabBarLabel: ({ focused }) => (
             <Text
-              fontSize={10}
-              lineHeight={17}
-              fontWeight={focused ? 'bold' : '400'}
+              fontFamily={FontFamily.BOLD}
+              fontStyle={FontStyle.caption2}
               color={focused ? Color.black : Color.gray3}
             >
               {route.name}
@@ -40,8 +42,8 @@ function Navigation() {
         />
         <Tab.Screen
           name="마이"
-          component={MyPageScreen}
-          options={{ tabBarIcon: ({ focused }) => (focused ? <MyFill /> : <MyPrimary />) }}
+          component={MyPageStackScreen}
+          options={{ tabBarIcon: ({ focused }) => (focused ? <MyFill /> : <MyPrimary />), headerTitle: '마이페이지' }}
         />
       </Tab.Navigator>
     </NavigationContainer>
