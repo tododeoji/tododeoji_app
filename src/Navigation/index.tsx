@@ -2,11 +2,13 @@ import React from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
-import { HomeScreen, StatusBoardScreen, MyPageScreen } from '../Screens';
-import Color from '../Common/Color';
-import Text from '../Components/Common/Text';
 
-import { HomeFill, HomePrimary, StatusBoardFill, StatusBoardPrimary, MyFill, MyPrimary } from '../Assets/icons';
+import { HomeScreen, StatusBoardScreen } from '../Screens';
+import Color from '../Common/Color';
+import { Text } from '../Components/Common';
+
+import { HomeFill, HomePrimary, StatusBoardFill, StatusBoardPrimary, MyFill, MyPrimary } from '../assets/icons';
+import { MyPageStackScreen } from './Stack/Mypage';
 
 const Tab = createBottomTabNavigator();
 
@@ -40,8 +42,8 @@ function Navigation() {
         />
         <Tab.Screen
           name="마이"
-          component={MyPageScreen}
-          options={{ tabBarIcon: ({ focused }) => (focused ? <MyFill /> : <MyPrimary />) }}
+          component={MyPageStackScreen}
+          options={{ tabBarIcon: ({ focused }) => (focused ? <MyFill /> : <MyPrimary />), headerTitle: '마이페이지' }}
         />
       </Tab.Navigator>
     </NavigationContainer>
