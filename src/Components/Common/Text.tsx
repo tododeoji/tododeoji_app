@@ -1,36 +1,32 @@
 import React, { useMemo } from 'react';
 import { StyleProp, StyleSheet, Text as RNText, TextProps as RNTextProps, ViewStyle } from 'react-native';
+import { FontFamilyType, FontStyleType } from '../../type/font';
+import { FontFamily, FontStyle } from '../../Common/Font';
 
 type TextProps = {
   children?: React.ReactNode;
   containerStyle?: StyleProp<ViewStyle>;
   color?: string;
-  fontSize?: number;
-  fontWeight?: 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
-  fontFamily?: string;
-  lineHeight?: number;
+  fontStyle?: FontStyleType;
+  fontFamily?: FontFamilyType;
 } & RNTextProps;
 
 const Text = ({
   children,
   style: styleProp,
   color = '#000',
-  fontSize = 14,
-  fontWeight = 'normal',
-  fontFamily = 'Pretendard-Regular',
-  lineHeight,
+  fontStyle = FontStyle.description2,
+  fontFamily = FontFamily.REGULAR,
   ...rest
 }: TextProps) => {
   const textStyle = useMemo(
     () => ({
       color,
-      fontSize,
-      fontWeight,
-      fontFamily,
-      lineHeight,
       padding: 0,
+      fontFamily,
+      ...fontStyle,
     }),
-    [color, fontSize, fontWeight, fontFamily, lineHeight],
+    [color, fontFamily, fontStyle],
   );
 
   return (
