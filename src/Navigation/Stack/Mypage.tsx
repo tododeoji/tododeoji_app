@@ -12,7 +12,7 @@ export function MyPageStackScreen() {
         headerShadowVisible: false,
       }}
     >
-      <Stack.Screen name="mypage" component={MyPageScreen} options={{ headerTitle: '마이 페이지' }} />
+      <Stack.Screen name="mypage" component={MyPageScreen} options={{ headerShown: false }} />
     </Stack.Navigator>
   );
 }
