@@ -7,8 +7,10 @@ import MyPrimary from './my-primary.svg';
 import Settings from './settings.svg';
 import NavigateLeft from './navigate-left.svg';
 import NavigateRight from './navigate-right.svg';
+import BoxIcon from './box.svg';
 
 export {
+  BoxIcon,
   NavigateRight,
   NavigateLeft,
   Settings,
