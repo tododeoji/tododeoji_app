@@ -44,6 +44,9 @@ function MainTabNavigation() {
             {route.name}
           </Text>
         ),
+        tabBarStyle: {
+          height: 55 + (insets.bottom === 0 ? 10 : insets.bottom),
+        },
       })}
     >
       <Tab.Screen

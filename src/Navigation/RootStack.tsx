@@ -1,10 +1,10 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import MainTabNavigation from '..';
+import MainTabNavigation from './MainTab';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import * as MyPage from '../../Screens/MyPage';
-import { RootStackParamList } from '../../types/navigator';
+import * as MyPage from '../Screens/MyPage';
+import { RootStackParamList } from '../types/navigator';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
