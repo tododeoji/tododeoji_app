@@ -1,13 +1,17 @@
 import React from 'react';
 
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 
 import { HomeScreen, StatusBoardScreen } from '../Screens';
 import Color from '../Common/Color';
 import { FontFamily, FontStyle } from '../Common/Font';
-import { Text, TouchableSVG } from '../Components/Common';
+import { NavigationHeader, Text, TouchableSVG } from '../Components/Common';
 
+import { MyPageStackScreen } from './Stack/Mypage';
+import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   HomeFill,
   HomePrimary,
@@ -19,16 +23,22 @@ import {
   NavigateLeft,
   NavigateRight,
 } from '../assets/icons';
-import { MyPageStackScreen } from './Stack/Mypage';
-import { StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Tab = createBottomTabNavigator();
 
 function Navigation() {
+  const insets = useSafeAreaInsets();
+
+  const navTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: 'white',
+    },
+  };
+
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navTheme}>
       <GestureHandlerRootView>
         <Tab.Navigator
           screenOptions={({ route }) => ({
@@ -49,18 +59,19 @@ function Navigation() {
             options={{
               tabBarIcon: ({ focused }) => (focused ? <HomeFill /> : <HomePrimary />),
               header: () => (
-                <SafeAreaView style={styles.container}>
-                  <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.title2}>
-                    {'1'}월
-                  </Text>
-                  <View style={styles.homeHeader}>
-                    <TouchableSVG SVG={NavigateLeft} fill={Color.white} />
-                    <View>
-                      <Text>오늘</Text>
+                <NavigationHeader
+                  insets={insets}
+                  HeaderTitle="1월"
+                  RightComponent={
+                    <View style={styles.homeHeader}>
+                      <TouchableSVG SVG={NavigateLeft} fill={Color.white} />
+                      <View>
+                        <Text>오늘</Text>
+                      </View>
+                      <TouchableSVG SVG={NavigateRight} fill={Color.white} />
                     </View>
-                    <TouchableSVG SVG={NavigateRight} fill={Color.white} />
-                  </View>
-                </SafeAreaView>
+                  }
+                />
               ),
             }}
           />
@@ -69,13 +80,7 @@ function Navigation() {
             component={StatusBoardScreen}
             options={{
               tabBarIcon: ({ focused }) => (focused ? <StatusBoardFill /> : <StatusBoardPrimary />),
-              header: () => (
-                <SafeAreaView style={styles.container}>
-                  <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.title2}>
-                    상태 보드
-                  </Text>
-                </SafeAreaView>
-              ),
+              header: () => <NavigationHeader insets={insets} HeaderTitle="상태보드" />,
             }}
           />
           <Tab.Screen
@@ -84,12 +89,11 @@ function Navigation() {
             options={{
               tabBarIcon: ({ focused }) => (focused ? <MyFill /> : <MyPrimary />),
               header: () => (
-                <SafeAreaView style={styles.container}>
-                  <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.title2}>
-                    마이 페이지
-                  </Text>
-                  <TouchableSVG SVG={Settings} size={20} fill="white" />
-                </SafeAreaView>
+                <NavigationHeader
+                  insets={insets}
+                  HeaderTitle="마이 페이지"
+                  RightComponent={<TouchableSVG SVG={Settings} size={20} fill="white" />}
+                />
               ),
             }}
           />
@@ -100,15 +104,10 @@ function Navigation() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-  },
   homeHeader: {
     flexDirection: 'row',
     gap: 2,
+    alignItems: 'center',
   },
 });
 
