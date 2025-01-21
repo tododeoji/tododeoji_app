@@ -5,7 +5,7 @@ import { Text } from '../Common';
 import { FontFamily, FontStyle } from '../../Common/Font';
 import Color from '../../Common/Color';
 
-function ProFile() {
+function ProFile({ navigation }: { navigation: any }) {
   return (
     <View style={styles.ProfileBox}>
       <FastImage style={styles.Image} source={require('../../assets/images/yellow_dozy.png')} />
@@ -17,7 +17,7 @@ function ProFile() {
         <Text fontStyle={FontStyle.description2} style={styles.Bio}>
           안녕하세요두지예요안녕하세요두지예요안녕하세요두지예요안녕하세요두지예요안녕하세요두지예요안녕하세요
         </Text>
-        <Pressable style={styles.EditButton}>
+        <Pressable onPress={() => navigation.navigate('editProfile')} style={styles.EditButton}>
           <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption2}>
             프로필 수정
           </Text>

@@ -9,12 +9,12 @@ interface MyPageScreenProps {
   navigation: any;
 }
 
-function MyPageScreen({}: MyPageScreenProps) {
+function MyPageScreen({ navigation }: MyPageScreenProps) {
   return (
     <View style={styles.Container}>
-      <ProFile />
+      <ProFile navigation={navigation} />
       <H h={16} />
-      <Pressable style={styles.SettingButton}>
+      <Pressable onPress={() => navigation.navigate('category')} style={styles.SettingButton}>
         <BoxIcon />
         <Text>카테고리 관리</Text>
       </Pressable>

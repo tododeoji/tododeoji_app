@@ -22,6 +22,8 @@ function RootStackNavigator() {
         <Stack.Navigator>
           <Stack.Screen name="main" component={MainTabNavigation} options={{ animation: 'fade', headerShown: false }} />
 
+          <Stack.Screen name="editProfile" component={MyPage.EditProfileScreen} />
+          <Stack.Screen name="category" component={MyPage.CategoryScreen} />
           <Stack.Screen name="setting" component={MyPage.SettingScreen} />
         </Stack.Navigator>
       </GestureHandlerRootView>

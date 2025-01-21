@@ -6,5 +6,8 @@ export type TabParamList = {
 
 export type RootStackParamList = {
   main: undefined;
+
+  editProfile: undefined;
+  category: undefined;
   setting: undefined;
 };
