@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { StyleProp, StyleSheet, Text as RNText, TextProps as RNTextProps, ViewStyle } from 'react-native';
-import { FontFamilyType, FontStyleType } from '../../type/font';
+import { FontFamilyType, FontStyleType } from '../../types/font';
 import { FontFamily, FontStyle } from '../../Common/Font';
 import Color from '../../Common/Color';
 
