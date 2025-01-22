@@ -11,8 +11,10 @@ import BoxIcon from './box.svg';
 import ArrowBack from './arrow-back.svg';
 import CloseIcon from './close.svg';
 import LinkIcon from './link.svg';
+import CameraIcon from './camera.svg';
 
 export {
+  CameraIcon,
   LinkIcon,
   CloseIcon,
   ArrowBack,
