@@ -12,8 +12,10 @@ import ArrowBack from './arrow-back.svg';
 import CloseIcon from './close.svg';
 import LinkIcon from './link.svg';
 import CameraIcon from './camera.svg';
+import MoveIcon from './move.svg';
 
 export {
+  MoveIcon,
   CameraIcon,
   LinkIcon,
   CloseIcon,
