@@ -26,7 +26,7 @@ const TouchableSVG = ({
   fill,
 }: TouchableSVGProps) => {
   return (
-    <TouchableWithoutFeedback style={style} onPress={() => onPress()} disabled={disabled}>
+    <TouchableWithoutFeedback style={style} onPress={onPress} disabled={disabled}>
       <SVG width={size ? size : width} height={size ? size : height} style={{ padding: p || 0 }} fill={fill} />
     </TouchableWithoutFeedback>
   );
