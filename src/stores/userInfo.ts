@@ -12,7 +12,7 @@ type UserInfoType = {
 interface UserInfoState {
   userInfo: UserInfoType;
   setUserInfo: (userInfo: UserInfoType) => void;
-  fatchUserInfo?: () => void;
+  fetchUserInfo?: () => void;
 }
 
 const useStore = create<UserInfoState>((set) => ({
