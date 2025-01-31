@@ -2,7 +2,7 @@ import React, { useCallback, useLayoutEffect, useState, useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DraggableFlatList, { DragEndParams, RenderItemParams } from 'react-native-draggable-flatlist';
-import Animated, { useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, withTiming, runOnJS, useSharedValue } from 'react-native-reanimated';
 
 import { H, NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
 import { ArrowBack, MoveIcon } from '../../assets/icons';
@@ -75,40 +75,50 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
     [],
   );
 
-  // 카테고리 item
-  const renderItem = useCallback(({ item, drag, isActive }: RenderItemParams<ListItem>) => {
-    const animatedStyle = useAnimatedStyle(() => {
-      return {
-        transform: [{ scale: withTiming(isActive ? 1.05 : 1) }],
-      };
-    }, [isActive]);
+  const isActiveShared = useSharedValue(false);
 
-    if (isHeaderItem(item)) {
-      if (item.id === 'visible_header') return item.isEmpty ? <EmptySection title={`${item.title}가 없어요.`} /> : null;
-      return (
-        <View style={[styles.headerContainer, item.id === 'hidden_header' && { marginTop: 40 }]}>
-          <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1}>
-            {item.title}
-          </Text>
-          <H h={8} />
-          {item.isEmpty && <EmptySection title={`${item.title}가 없어요.`} />}
-        </View>
-      );
-    }
-    return (
-      <Animated.View style={[styles.itemContainer, animatedStyle]}>
-        <Pressable onPressIn={drag}>
-          <MoveIcon />
-        </Pressable>
-        <View style={{ flex: 1 }}>
-          <View style={styles.categoryItem}>
-            <Text>{item.title}</Text>
-            <View style={[styles.colorDot, { backgroundColor: item.color }]} />
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: withTiming(isActiveShared.value ? 1.05 : 1) }],
+    };
+  }, [isActiveShared.value]);
+
+  // 카테고리 item
+  const renderItem = useCallback(
+    ({ item, drag }: RenderItemParams<ListItem>) => {
+      if (isHeaderItem(item)) {
+        if (item.id === 'visible_header')
+          return item.isEmpty ? <EmptySection title={`${item.title}가 없어요.`} /> : null;
+        return (
+          <View style={[styles.headerContainer, item.id === 'hidden_header' && { marginTop: 40 }]}>
+            <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1}>
+              {item.title}
+            </Text>
+            <H h={8} />
+            {item.isEmpty && <EmptySection title={`${item.title}가 없어요.`} />}
           </View>
-        </View>
-      </Animated.View>
-    );
-  }, []);
+        );
+      }
+      return (
+        <Animated.View style={[styles.itemContainer, animatedStyle]}>
+          <Pressable
+            onPressIn={drag}
+            onPressOut={() => (isActiveShared.value = false)}
+            onLongPress={() => (isActiveShared.value = true)}
+          >
+            <MoveIcon />
+          </Pressable>
+          <View style={{ flex: 1 }}>
+            <View style={styles.categoryItem}>
+              <Text>{item.title}</Text>
+              <View style={[styles.colorDot, { backgroundColor: item.color }]} />
+            </View>
+          </View>
+        </Animated.View>
+      );
+    },
+    [animatedStyle, isActiveShared],
+  );
 
   const listData = useMemo(() => {
     const visibleCategories = categories.filter((item) => !item.isHidden);
