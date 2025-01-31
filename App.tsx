@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 
-import Navigation from './src/Navigation';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SplashScreen from 'react-native-splash-screen';
+import RootStackNavigator from './src/Navigation/RootStack';
 
 interface AppProps {}
 
@@ -15,7 +15,7 @@ function App({}: AppProps) {
 
   return (
     <SafeAreaProvider>
-      <Navigation />
+      <RootStackNavigator />
     </SafeAreaProvider>
   );
 }

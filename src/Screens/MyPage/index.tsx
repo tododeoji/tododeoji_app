@@ -1,18 +1,4 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text } from '../../Components/Common';
-
-interface MyPageScreenProps {}
-
-function MyPageScreen({}: MyPageScreenProps) {
-  return (
-    <SafeAreaView>
-      <Text>MyPage Screen</Text>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({});
-
-export default MyPageScreen;
+export { default as MyPageScreen } from './MyPageScreen';
+export { default as EditProfileScreen } from './EditProfileScreen';
+export { default as CategoryScreen } from './CategoryScreen';
+export { default as SettingScreen } from './SettingScreen';
