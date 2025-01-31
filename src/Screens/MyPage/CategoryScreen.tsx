@@ -1,12 +1,14 @@
 import React, { useCallback, useLayoutEffect, useState, useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { H, NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import DraggableFlatList, { DragEndParams, RenderItemParams } from 'react-native-draggable-flatlist';
+import Animated, { useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
+
+import { H, NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
 import { ArrowBack, MoveIcon } from '../../assets/icons';
 import { FontFamily, FontStyle } from '../../Common/Font';
-import DraggableFlatList, { DragEndParams, RenderItemParams } from 'react-native-draggable-flatlist';
 import Color from '../../Common/Color';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, runOnJS } from 'react-native-reanimated';
+
 interface CategoryItem {
   id: string;
   title: string;
@@ -73,9 +75,8 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
     [],
   );
 
+  // 카테고리 item
   const renderItem = useCallback(({ item, drag, isActive }: RenderItemParams<ListItem>) => {
-    const scale = useSharedValue(1);
-
     const animatedStyle = useAnimatedStyle(() => {
       return {
         transform: [{ scale: withTiming(isActive ? 1.05 : 1) }],
@@ -89,7 +90,7 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
           <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1}>
             {item.title}
           </Text>
-          <H h={16} />
+          <H h={8} />
           {item.isEmpty && <EmptySection title={`${item.title}가 없어요.`} />}
         </View>
       );
@@ -132,7 +133,7 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
         <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1}>
           사용 중인 카테고리
         </Text>
-        <H h={16} />
+        <H h={8} />
       </View>
       <DraggableFlatList<ListItem>
         data={listData}
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#F0F0F0',
   },
-  colorDot: { width: 12, height: 12, borderRadius: 6 },
+  colorDot: { width: 20, height: 20, borderRadius: 10 },
   headerContainer: { width: '100%', backgroundColor: '#FFFFFF', zIndex: 1, paddingHorizontal: 24 },
   emptyContainer: { alignItems: 'center', justifyContent: 'center', height: 46 },
 });
