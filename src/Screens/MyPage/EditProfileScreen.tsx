@@ -77,14 +77,21 @@ function EditProfileScreen({ navigation }: EditProfileScreenProps) {
   };
 
   const handleImagePicker = async (onChange: (value: string) => void) => {
-    // 이미지 업로드
-    const result = await ImagePicker.launchImageLibrary({
-      mediaType: 'photo',
-      quality: 1,
-    });
+    try {
+      const result = await ImagePicker.launchImageLibrary({
+        mediaType: 'photo',
+        quality: 1,
+      });
 
-    if (result.assets && result.assets[0].uri) {
-      onChange(result.assets[0].uri);
+      if (result.assets?.[0]?.uri) {
+        onChange(result.assets[0].uri);
+      } else if (result.errorMessage) {
+        console.error('이미지 선택 오류:', result.errorMessage);
+        // TODO: 사용자에게 에러 메시지 표시
+      }
+    } catch (error) {
+      console.error('이미지 선택 중 오류 발생:', error);
+      // TODO: 사용자에게 에러 메시지 표시
     }
   };
 
