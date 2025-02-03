@@ -8,7 +8,6 @@ import Color from '../Common/Color';
 import { FontFamily, FontStyle } from '../Common/Font';
 import { NavigationHeader, Text, TouchableSVG } from '../Components/Common';
 
-import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import {
@@ -18,8 +17,6 @@ import {
   StatusBoardPrimary,
   MyFill,
   MyPrimary,
-  NavigateLeft,
-  NavigateRight,
   Settings,
 } from '../assets/icons';
 import { RootStackParamList, TabParamList } from '../types/navigator';
@@ -54,21 +51,6 @@ function MainTabNavigation() {
         component={HomeScreen}
         options={{
           tabBarIcon: ({ focused }) => (focused ? <HomeFill /> : <HomePrimary />),
-          header: () => (
-            <NavigationHeader
-              insets={insets}
-              HeaderTitle="1월"
-              RightComponent={
-                <View style={styles.homeHeader}>
-                  <TouchableSVG SVG={NavigateLeft} fill={Color.white} />
-                  <View>
-                    <Text>오늘</Text>
-                  </View>
-                  <TouchableSVG SVG={NavigateRight} fill={Color.white} />
-                </View>
-              }
-            />
-          ),
         }}
       />
       <Tab.Screen
@@ -106,13 +88,5 @@ function MainTabNavigation() {
     </Tab.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  homeHeader: {
-    flexDirection: 'row',
-    gap: 2,
-    alignItems: 'center',
-  },
-});
 
 export default MainTabNavigation;

@@ -13,8 +13,16 @@ import CloseIcon from './close.svg';
 import LinkIcon from './link.svg';
 import CameraIcon from './camera.svg';
 import MoveIcon from './move.svg';
+import TodoIcon from './todo';
+import ProgressIcon from './Progress';
+import DoneIcon from './Done';
+import KebobIcon from './kebob.svg';
 
 export {
+  KebobIcon,
+  DoneIcon,
+  ProgressIcon,
+  TodoIcon,
   MoveIcon,
   CameraIcon,
   LinkIcon,
