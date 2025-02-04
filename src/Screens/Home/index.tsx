@@ -94,7 +94,7 @@ const HomeScreen = ({ navigation }: any) => {
     isExpanded
       ? (calendarHeight.value = withTiming('100%', { duration: 300 }))
       : (calendarHeight.value = withTiming('45%', { duration: 300 }));
-  }, [isExpanded, days]);
+  }, [isExpanded]);
 
   useEffect(() => {
     setSelectedDate(formatDate(currentMonth));
