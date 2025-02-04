@@ -190,8 +190,12 @@ const HomeScreen = ({ navigation }: any) => {
 
   return (
     <>
-      <Animated.View style={[styles.calendar, { minHeight: days.length > 35 ? 382 : 325 }, animatedStyles]}>
-        <GestureRecognizer onSwipeDown={() => !isExpanded && setIsExpanded(true)} config={config} style={{ flex: 1 }}>
+      <Animated.View style={[styles.calendar, { minHeight: days.length > 35 ? 382 : 345 }, animatedStyles]}>
+        <GestureRecognizer
+          onSwipeDown={() => !isExpanded && setIsExpanded(() => true)}
+          config={config}
+          style={{ flex: 1 }}
+        >
           <View style={{ flex: 1 }}>
             <View style={styles.weekHeader}>
               {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
@@ -205,7 +209,7 @@ const HomeScreen = ({ navigation }: any) => {
               ))}
             </View>
 
-            <ScrollView scrollEnabled={isExpanded}>
+            <ScrollView scrollEnabled={isExpanded} showsVerticalScrollIndicator={false}>
               <View style={styles.daysContainerContent}>
                 {days.map((day, index) => (
                   <CalendarDayContainer key={index} dayInfo={day} dayCount={days.length} TodoDataList={TodoDataList} />
@@ -245,6 +249,7 @@ const styles = StyleSheet.create({
   daysContainerContent: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    paddingBottom: 8,
   },
 });
 

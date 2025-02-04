@@ -5,7 +5,7 @@ import { FontFamily, FontStyle } from '../../Common/Font';
 import Color from '../../Common/Color';
 import { useExpandedStore, useSelectedDateStore } from '../../stores/home';
 import { formatDate } from '../../lib/formatDate';
-import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface CalendarDayContainerProps {
   dayInfo: { date: Date; disabled: boolean };
@@ -20,14 +20,13 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
 
   const animationProgress = useSharedValue(isExpanded ? 1 : 0);
 
-  const animatedItemStyle = useAnimatedStyle(() => {
-    const height = interpolate(animationProgress.value, [0, 1], [2, 20]);
-
-    return {
-      height,
-      opacity: interpolate(animationProgress.value, [0, 0.5, 1], [1, 0, 1]),
-    };
-  });
+  const animatedItemStyle = useAnimatedStyle(
+    () => ({
+      height: interpolate(animationProgress.value, [0, 1], [4, 22]),
+      opacity: interpolate(animationProgress.value, [0, 0.5, 1], [1, 1, 1]),
+    }),
+    [],
+  );
 
   const animatedTextStyle = useAnimatedStyle(() => {
     return {
@@ -37,7 +36,10 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
 
   useEffect(() => {
     setShowItemCount(isExpanded ? 6 : 4);
-    animationProgress.value = withTiming(isExpanded ? 1 : 0, { duration: 300 });
+    animationProgress.value = withTiming(isExpanded ? 1 : 0, {
+      duration: 200,
+      easing: Easing.linear,
+    });
   }, [isExpanded]);
 
   const dateString = formatDate(dayInfo.date);
@@ -48,13 +50,13 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
 
   const handleDayPress = () => {
     console.log('Selected date:', dateString);
+    setIsExpanded((prev) => (dateString === selectedDate ? !prev : false));
     setSelectedDate(dateString);
-    setIsExpanded(false);
   };
 
   return (
     <Pressable
-      style={[styles.dayContainer, isExpanded ? { minHeight: dayCount > 35 ? 104.3 : 125.1 } : { height: 60 }]}
+      style={[styles.dayContainer, isExpanded ? { minHeight: dayCount > 35 ? 104.3 : 125.1 } : { height: 63 }]}
       onPress={handleDayPress}
     >
       <View
@@ -73,7 +75,7 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
               <Animated.View key={index} style={[styles.todoItem, { backgroundColor: todo.color }, animatedItemStyle]}>
                 <Animated.View style={animatedTextStyle}>
                   {isExpanded && (
-                    <Text fontFamily={FontFamily.SEMIBOLD} numberOfLines={1} style={{ fontSize: 11 }}>
+                    <Text fontFamily={FontFamily.SEMIBOLD} style={{ fontSize: 11, letterSpacing: -0.2 }}>
                       {todo.title}
                     </Text>
                   )}
@@ -83,7 +85,11 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
         )}
         {todos.length > showItemCount && (
           <View style={{ width: '95%', paddingHorizontal: 2 }}>
-            <Text fontFamily={FontFamily.BOLD} style={{ textAlign: 'right', fontSize: 10 }}>
+            <Text
+              fontFamily={FontFamily.BOLD}
+              fontStyle={FontStyle.caption2}
+              style={{ textAlign: 'right', lineHeight: 12 }}
+            >
               +{todos.length - showItemCount}
             </Text>
           </View>
@@ -105,13 +111,15 @@ const styles = StyleSheet.create({
   },
   dayTextContainer: {
     width: 30,
+    height: 23,
     borderRadius: 12,
     marginBottom: 2,
   },
   todoItem: {
-    width: '95%',
-    // padding: 2,
+    width: '100%',
     paddingLeft: 4,
+    paddingRight: 0.1,
+    overflow: 'hidden',
     borderRadius: 2,
     marginBottom: 2,
   },

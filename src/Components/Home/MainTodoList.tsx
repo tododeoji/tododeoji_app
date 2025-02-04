@@ -7,7 +7,7 @@ import { H, Text } from '../Common';
 import Color from '../../Common/Color';
 import { TodoItem } from '../../types/todo';
 import TodoItemContainer from '../TodoItemContainer';
-import { FloatingAddIcon } from '../../assets/icons';
+import { DuzyIcon, FloatingAddIcon } from '../../assets/icons';
 
 export default function MainTodoList({ selectedDateTodos }: { selectedDateTodos: TodoItem[] }) {
   return (
@@ -17,10 +17,14 @@ export default function MainTodoList({ selectedDateTodos }: { selectedDateTodos:
           style={{ paddingHorizontal: 24, paddingBottom: 30 }}
           data={selectedDateTodos}
           renderItem={({ item }) => <TodoItemContainer todo={item} />}
-          ListFooterComponent={() => <H h={42} />}
+          ListHeaderComponent={() => <H h={16} />}
+          ListFooterComponent={() => <H h={55} />}
         />
       ) : (
-        <Text>오늘 할 일이 없어요.</Text>
+        <View style={styles.emptyContainer}>
+          <DuzyIcon width={80} height={78.27} />
+          <Text color={Color.gray3}>할 일이 없어요.</Text>
+        </View>
       )}
       <Pressable
         style={{
@@ -32,7 +36,6 @@ export default function MainTodoList({ selectedDateTodos }: { selectedDateTodos:
           height: 45,
           flexDirection: 'row',
           justifyContent: 'center',
-          // backgroundColor: 'red',
         }}
         onPress={() => console.log('press Floating Button')}
       >
@@ -51,7 +54,8 @@ export default function MainTodoList({ selectedDateTodos }: { selectedDateTodos:
 const styles = StyleSheet.create({
   todoListContainer: {
     flex: 1,
-    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: Color.gray1,
   },
   todoItem: {
     paddingVertical: 8,
@@ -68,5 +72,9 @@ const styles = StyleSheet.create({
     backgroundColor: Color.white,
     borderWidth: 0.5,
     borderColor: Color.gray2,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    padding: '10%',
   },
 });
