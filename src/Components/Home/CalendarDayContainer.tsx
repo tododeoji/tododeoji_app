@@ -14,7 +14,6 @@ interface CalendarDayContainerProps {
 }
 
 function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayContainerProps) {
-  console.log(dayCount);
   const { selectedDate, setSelectedDate } = useSelectedDateStore();
   const { isExpanded, setIsExpanded } = useExpandedStore();
   const [showItemCount, setShowItemCount] = useState(5);
