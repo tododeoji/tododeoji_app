@@ -1,19 +1,19 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Pressable, ViewStyle, DimensionValue } from 'react-native';
-import GestureRecognizer from 'react-native-swipe-gestures';
+import { Gesture, GestureDetector, GestureType, PanGestureHandler, ScrollView } from 'react-native-gesture-handler';
+import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
+import CalendarDayContainer from '../../Components/Home/CalendarDayContainer';
+import MainTodoList from '../../Components/Home/MainTodoList';
+
 import Color from '../../Common/Color';
 import { FontStyle } from '../../Common/Font';
 import { NavigateLeft, NavigateRight } from '../../assets/icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useExpandedStore, useSelectedDateStore } from '../../stores/home';
 import { formatDate } from '../../lib/formatDate';
-import CalendarDayContainer from '../../Components/Home/CalendarDayContainer';
-import MainTodoList from '../../Components/Home/MainTodoList';
 import { TodoItem } from '../../types/todo';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { ScrollView } from 'react-native-gesture-handler';
 
 interface TodosByDate {
   [key: string]: {
@@ -24,6 +24,10 @@ interface TodosByDate {
 const HomeScreen = ({ navigation }: any) => {
   const insets = useSafeAreaInsets();
   const newDate = new Date();
+
+  const scrollViewRef = useRef<ScrollView>(null);
+  const swipeGestureRef = useRef<GestureType | undefined>();
+  const panGestureRef = useRef<PanGestureHandler | null>(null);
 
   const [currentMonth, setCurrentMonth] = useState(newDate);
   const { selectedDate, setSelectedDate } = useSelectedDateStore();
@@ -84,6 +88,7 @@ const HomeScreen = ({ navigation }: any) => {
       ],
     },
   };
+
   const calendarHeight = useSharedValue<string | number>('100%');
   const animatedStyles = useAnimatedStyle<ViewStyle>(() => {
     return {
@@ -180,22 +185,28 @@ const HomeScreen = ({ navigation }: any) => {
     });
   });
 
-  const config = {
-    velocityThreshold: 0.3,
-    directionalOffsetThreshold: 80,
-    gestureIsClickThreshold: 5,
-  };
-
   const selectedDateTodos = TodoDataList[selectedDate]?.todos || [];
+
+  const swipeGesture = Gesture.Pan()
+    .withRef(swipeGestureRef)
+    .minDistance(10)
+    .activeOffsetX([-20, 20])
+    .onBegin((e) => {
+      if (Math.abs(e.translationX) > Math.abs(e.translationY)) {
+        scrollViewRef?.current?.scrollTo({ x: 0, y: 0 });
+      }
+    })
+    .onEnd((e) => {
+      'worklet';
+      e.translationX < -50 && runOnJS(setNextMonth)();
+      e.translationX > 50 && runOnJS(setLastMonth)();
+      e.translationY > 100 && !isExpanded && runOnJS(setIsExpanded)(true);
+    });
 
   return (
     <>
       <Animated.View style={[styles.calendar, { minHeight: days.length > 35 ? 382 : 345 }, animatedStyles]}>
-        <GestureRecognizer
-          onSwipeDown={() => !isExpanded && setIsExpanded(() => true)}
-          config={config}
-          style={{ flex: 1 }}
-        >
+        <GestureDetector gesture={Gesture.Race(swipeGesture)}>
           <View style={{ flex: 1 }}>
             <View style={styles.weekHeader}>
               {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
@@ -209,7 +220,14 @@ const HomeScreen = ({ navigation }: any) => {
               ))}
             </View>
 
-            <ScrollView scrollEnabled={isExpanded} showsVerticalScrollIndicator={false}>
+            <ScrollView
+              ref={scrollViewRef}
+              scrollEnabled={isExpanded}
+              showsVerticalScrollIndicator={false}
+              scrollEventThrottle={16}
+              directionalLockEnabled
+              simultaneousHandlers={[panGestureRef]}
+            >
               <View style={styles.daysContainerContent}>
                 {days.map((day, index) => (
                   <CalendarDayContainer key={index} dayInfo={day} dayCount={days.length} TodoDataList={TodoDataList} />
@@ -217,7 +235,7 @@ const HomeScreen = ({ navigation }: any) => {
               </View>
             </ScrollView>
           </View>
-        </GestureRecognizer>
+        </GestureDetector>
       </Animated.View>
       {!isExpanded && <MainTodoList selectedDateTodos={selectedDateTodos} />}
     </>

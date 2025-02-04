@@ -12,12 +12,11 @@ export const useSelectedDateStore = create<SelectedDateStoreState>((set) => ({
 
 interface ExpandedStoreState {
   isExpanded: boolean;
-  setIsExpanded: (updater: (prev: boolean) => boolean) => void;
+  setIsExpanded: (isExpanded: boolean) => void;
+  toggleExpanded: () => void;
 }
 export const useExpandedStore = create<ExpandedStoreState>((set) => ({
   isExpanded: true,
-  setIsExpanded: (updater) =>
-    set((state) => ({
-      isExpanded: updater(state.isExpanded),
-    })),
+  setIsExpanded: (isExpanded: boolean) => set({ isExpanded }),
+  toggleExpanded: () => set((state) => ({ isExpanded: !state.isExpanded })),
 }));

@@ -15,7 +15,7 @@ interface CalendarDayContainerProps {
 
 function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayContainerProps) {
   const { selectedDate, setSelectedDate } = useSelectedDateStore();
-  const { isExpanded, setIsExpanded } = useExpandedStore();
+  const { isExpanded, setIsExpanded, toggleExpanded } = useExpandedStore();
   const [showItemCount, setShowItemCount] = useState(6);
 
   const animationProgress = useSharedValue(isExpanded ? 1 : 0);
@@ -50,7 +50,7 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
 
   const handleDayPress = () => {
     console.log('Selected date:', dateString);
-    setIsExpanded((prev) => (dateString === selectedDate ? !prev : false));
+    dateString === selectedDate ? toggleExpanded() : setIsExpanded(false);
     setSelectedDate(dateString);
   };
 
