@@ -16,12 +16,12 @@ interface CalendarDayContainerProps {
 function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayContainerProps) {
   const { selectedDate, setSelectedDate } = useSelectedDateStore();
   const { isExpanded, setIsExpanded } = useExpandedStore();
-  const [showItemCount, setShowItemCount] = useState(5);
+  const [showItemCount, setShowItemCount] = useState(6);
 
   const animationProgress = useSharedValue(isExpanded ? 1 : 0);
 
   const animatedItemStyle = useAnimatedStyle(() => {
-    const height = interpolate(animationProgress.value, [0, 1], [1, 10]);
+    const height = interpolate(animationProgress.value, [0, 1], [2, 20]);
 
     return {
       height,
@@ -36,7 +36,7 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
   });
 
   useEffect(() => {
-    setShowItemCount(isExpanded ? 5 : 4);
+    setShowItemCount(isExpanded ? 6 : 4);
     animationProgress.value = withTiming(isExpanded ? 1 : 0, { duration: 300 });
   }, [isExpanded]);
 
@@ -54,10 +54,7 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
 
   return (
     <Pressable
-      style={[
-        styles.dayContainer,
-        isExpanded ? { height: dayCount > 35 ? '25.72%' : '29.48%' } : { height: dayCount > 35 ? '25.4%' : '28.88%' },
-      ]}
+      style={[styles.dayContainer, isExpanded ? { minHeight: dayCount > 35 ? 104.3 : 125.1 } : { height: 60 }]}
       onPress={handleDayPress}
     >
       <View
@@ -76,7 +73,7 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
               <Animated.View key={index} style={[styles.todoItem, { backgroundColor: todo.color }, animatedItemStyle]}>
                 <Animated.View style={animatedTextStyle}>
                   {isExpanded && (
-                    <Text fontFamily={FontFamily.SEMIBOLD} fontStyle={FontStyle.caption3} numberOfLines={1}>
+                    <Text fontFamily={FontFamily.SEMIBOLD} numberOfLines={1} style={{ fontSize: 11 }}>
                       {todo.title}
                     </Text>
                   )}
@@ -86,7 +83,7 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
         )}
         {todos.length > showItemCount && (
           <View style={{ width: '95%', paddingHorizontal: 2 }}>
-            <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption3} style={{ textAlign: 'right' }}>
+            <Text fontFamily={FontFamily.BOLD} style={{ textAlign: 'right', fontSize: 10 }}>
               +{todos.length - showItemCount}
             </Text>
           </View>
@@ -100,6 +97,7 @@ export default CalendarDayContainer;
 
 const styles = StyleSheet.create({
   dayContainer: {
+    width: '14.28%',
     padding: 2,
     paddingTop: 4,
     alignItems: 'center',
@@ -107,16 +105,14 @@ const styles = StyleSheet.create({
   },
   dayTextContainer: {
     width: 30,
-    height: 23,
     borderRadius: 12,
     marginBottom: 2,
   },
   todoItem: {
     width: '95%',
-    padding: 1,
+    // padding: 2,
     paddingLeft: 4,
     borderRadius: 2,
     marginBottom: 2,
-    overflow: 'hidden',
   },
 });

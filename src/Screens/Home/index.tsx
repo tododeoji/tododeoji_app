@@ -13,6 +13,7 @@ import CalendarDayContainer from '../../Components/Home/CalendarDayContainer';
 import MainTodoList from '../../Components/Home/MainTodoList';
 import { TodoItem } from '../../types/todo';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { ScrollView } from 'react-native-gesture-handler';
 
 interface TodosByDate {
   [key: string]: {
@@ -189,18 +190,13 @@ const HomeScreen = ({ navigation }: any) => {
 
   return (
     <>
-      <Animated.View style={[styles.calendar, { minHeight: days.length > 35 ? 350 : 285 }, animatedStyles]}>
-        <GestureRecognizer
-          onSwipeUp={() => isExpanded && setIsExpanded(false)}
-          onSwipeDown={() => !isExpanded && setIsExpanded(true)}
-          config={config}
-          style={{ flex: 1 }}
-        >
-          <View>
+      <Animated.View style={[styles.calendar, { minHeight: days.length > 35 ? 382 : 325 }, animatedStyles]}>
+        <GestureRecognizer onSwipeDown={() => !isExpanded && setIsExpanded(true)} config={config} style={{ flex: 1 }}>
+          <View style={{ flex: 1 }}>
             <View style={styles.weekHeader}>
               {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
                 <Text
-                  fontStyle={FontStyle.caption2}
+                  fontStyle={FontStyle.caption1}
                   key={index}
                   style={[styles.weekDayText, index === 0 && { color: Color.red }]}
                 >
@@ -208,13 +204,14 @@ const HomeScreen = ({ navigation }: any) => {
                 </Text>
               ))}
             </View>
-            <View style={styles.daysContainer}>
-              {days.map((day, index) => (
-                <View key={index} style={styles.dayWrapper}>
-                  <CalendarDayContainer dayInfo={day} dayCount={days.length} TodoDataList={TodoDataList} />
-                </View>
-              ))}
-            </View>
+
+            <ScrollView scrollEnabled={isExpanded}>
+              <View style={styles.daysContainerContent}>
+                {days.map((day, index) => (
+                  <CalendarDayContainer key={index} dayInfo={day} dayCount={days.length} TodoDataList={TodoDataList} />
+                ))}
+              </View>
+            </ScrollView>
           </View>
         </GestureRecognizer>
       </Animated.View>
@@ -231,7 +228,6 @@ const styles = StyleSheet.create({
   },
   calendar: {
     paddingHorizontal: 24,
-    // backgroundColor: 'gray',
   },
   weekHeader: {
     flexDirection: 'row',
@@ -244,11 +240,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   daysContainer: {
+    width: '100%',
+  },
+  daysContainerContent: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-  },
-  dayWrapper: {
-    width: '14.28%',
   },
 });
 
