@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { View, StyleSheet, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable, ViewStyle, DimensionValue } from 'react-native';
 import GestureRecognizer from 'react-native-swipe-gestures';
 
 import { NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
@@ -12,6 +12,7 @@ import { formatDate } from '../../lib/formatDate';
 import CalendarDayContainer from '../../Components/Home/CalendarDayContainer';
 import MainTodoList from '../../Components/Home/MainTodoList';
 import { TodoItem } from '../../types/todo';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 
 interface TodosByDate {
   [key: string]: {
@@ -61,49 +62,43 @@ const HomeScreen = ({ navigation }: any) => {
     '2025-02-27': {
       todos: [{ id: 3, state: 'todo', category: '공부', title: '프로젝트 회의', color: '#CCCCCC' }],
     },
+    '2025-02-26': {
+      todos: [
+        { id: 1, state: 'done', category: '공부', title: '영어 공부', color: '#FFE5E5' },
+        { id: 2, state: 'todo', category: '공부', title: '송별회', color: '#FF4747' },
+        { id: 3, state: 'progress', category: '공부', title: '세탁기 돌리기', color: '#FF8026' },
+        { id: 4, state: 'todo', category: '공부', title: '과제 제출', color: '#FFC119' },
+        { id: 5, state: 'done', category: '공부', title: '카공', color: '#00D0F9' },
+        { id: 6, state: 'done', category: '공부', title: '코테 준비', color: '#8A4BFF' },
+      ],
+    },
+    '2025-03-30': {
+      todos: [
+        { id: 1, state: 'done', category: '공부', title: '영어 공부', color: '#FFE5E5' },
+        { id: 2, state: 'todo', category: '공부', title: '송별회', color: '#FF4747' },
+        { id: 3, state: 'progress', category: '공부', title: '세탁기 돌리기', color: '#FF8026' },
+        { id: 4, state: 'todo', category: '공부', title: '과제 제출', color: '#FFC119' },
+        { id: 5, state: 'done', category: '공부', title: '카공', color: '#00D0F9' },
+        { id: 6, state: 'done', category: '공부', title: '코테 준비', color: '#8A4BFF' },
+      ],
+    },
   };
+  const calendarHeight = useSharedValue<string | number>('100%');
+  const animatedStyles = useAnimatedStyle<ViewStyle>(() => {
+    return {
+      height: calendarHeight.value as unknown as DimensionValue,
+    };
+  });
+
+  useEffect(() => {
+    isExpanded
+      ? (calendarHeight.value = withTiming('100%', { duration: 300 }))
+      : (calendarHeight.value = withTiming('45%', { duration: 300 }));
+  }, [isExpanded, days]);
 
   useEffect(() => {
     setSelectedDate(formatDate(currentMonth));
   }, []);
-
-  const setLastMonth = () => {
-    const date = new Date(currentMonth);
-    date.setMonth(date.getMonth() - 1);
-    setCurrentMonth(date);
-  };
-
-  const setNextMonth = () => {
-    const date = new Date(currentMonth);
-    date.setMonth(date.getMonth() + 1);
-    setCurrentMonth(date);
-  };
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      header: () => (
-        <NavigationHeader
-          insets={insets}
-          HeaderTitle={`${currentMonth.getFullYear()}년 ${currentMonth.getMonth() + 1}월`}
-          RightComponent={
-            <View style={styles.homeHeader}>
-              <TouchableSVG SVG={NavigateLeft} onPress={setLastMonth} fill={Color.white} />
-              <Pressable
-                style={{ backgroundColor: Color.yellow, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 15 }}
-                onPress={() => {
-                  setCurrentMonth(newDate);
-                  setSelectedDate(formatDate(newDate));
-                }}
-              >
-                <Text>오늘</Text>
-              </Pressable>
-              <TouchableSVG SVG={NavigateRight} fill={Color.white} onPress={setNextMonth} />
-            </View>
-          }
-        />
-      ),
-    });
-  });
 
   const getDaysInMonth = (date: Date) => {
     const year = date.getFullYear();
@@ -146,56 +141,83 @@ const HomeScreen = ({ navigation }: any) => {
 
   const days = getDaysInMonth(currentMonth);
 
+  const setLastMonth = () => {
+    const date = new Date(currentMonth);
+    date.setMonth(date.getMonth() - 1);
+    setCurrentMonth(date);
+  };
+
+  const setNextMonth = () => {
+    const date = new Date(currentMonth);
+    date.setMonth(date.getMonth() + 1);
+    setCurrentMonth(date);
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <NavigationHeader
+          insets={insets}
+          HeaderTitle={`${currentMonth.getFullYear()}년 ${currentMonth.getMonth() + 1}월`}
+          RightComponent={
+            <View style={styles.homeHeader}>
+              <TouchableSVG SVG={NavigateLeft} onPress={setLastMonth} fill={Color.white} />
+              <Pressable
+                style={{ backgroundColor: Color.yellow, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 15 }}
+                onPress={() => {
+                  setCurrentMonth(newDate);
+                  setSelectedDate(formatDate(newDate));
+                }}
+              >
+                <Text>오늘</Text>
+              </Pressable>
+              <TouchableSVG SVG={NavigateRight} fill={Color.white} onPress={setNextMonth} />
+            </View>
+          }
+        />
+      ),
+    });
+  });
+
   const config = {
     velocityThreshold: 0.3,
     directionalOffsetThreshold: 80,
     gestureIsClickThreshold: 5,
   };
 
-  const onSwipeUp = () => {
-    if (isExpanded) {
-      setIsExpanded(false);
-      console.log('onSwipeUp');
-    }
-  };
-
-  const onSwipeDown = () => {
-    if (!isExpanded) {
-      setIsExpanded(true);
-      console.log('onSwipeDown');
-    }
-  };
   const selectedDateTodos = TodoDataList[selectedDate]?.todos || [];
 
   return (
     <>
-      <GestureRecognizer
-        onSwipeUp={onSwipeUp}
-        onSwipeDown={onSwipeDown}
-        config={config}
-        style={[styles.calendar, { height: isExpanded ? '100%' : '45%' }]}
-      >
-        <View>
-          <View style={styles.weekHeader}>
-            {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
-              <Text
-                fontStyle={FontStyle.caption2}
-                key={index}
-                style={[styles.weekDayText, index === 0 && { color: Color.red }]}
-              >
-                {day}
-              </Text>
-            ))}
+      <Animated.View style={[styles.calendar, { minHeight: days.length > 35 ? 350 : 285 }, animatedStyles]}>
+        <GestureRecognizer
+          onSwipeUp={() => isExpanded && setIsExpanded(false)}
+          onSwipeDown={() => !isExpanded && setIsExpanded(true)}
+          config={config}
+          style={{ flex: 1 }}
+        >
+          <View>
+            <View style={styles.weekHeader}>
+              {['일', '월', '화', '수', '목', '금', '토'].map((day, index) => (
+                <Text
+                  fontStyle={FontStyle.caption2}
+                  key={index}
+                  style={[styles.weekDayText, index === 0 && { color: Color.red }]}
+                >
+                  {day}
+                </Text>
+              ))}
+            </View>
+            <View style={styles.daysContainer}>
+              {days.map((day, index) => (
+                <View key={index} style={styles.dayWrapper}>
+                  <CalendarDayContainer dayInfo={day} dayCount={days.length} TodoDataList={TodoDataList} />
+                </View>
+              ))}
+            </View>
           </View>
-          <View style={styles.daysContainer}>
-            {days.map((day, index) => (
-              <View key={index} style={styles.dayWrapper}>
-                <CalendarDayContainer dayInfo={day} TodoDataList={TodoDataList} />
-              </View>
-            ))}
-          </View>
-        </View>
-      </GestureRecognizer>
+        </GestureRecognizer>
+      </Animated.View>
       {!isExpanded && <MainTodoList selectedDateTodos={selectedDateTodos} />}
     </>
   );
@@ -208,13 +230,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   calendar: {
-    height: '40%',
     paddingHorizontal: 24,
+    // backgroundColor: 'gray',
   },
   weekHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: 23,
+    height: 22,
     paddingHorizontal: 2,
   },
   weekDayText: {
