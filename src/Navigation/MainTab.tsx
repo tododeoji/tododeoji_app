@@ -21,6 +21,7 @@ import {
 } from '../assets/icons';
 import { RootStackParamList, TabParamList } from '../types/navigator';
 import { StackNavigationProp } from '@react-navigation/stack';
+import StatusBoardTab from './StatusBoardTab';
 
 type CombinedNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList>,
@@ -55,7 +56,7 @@ function MainTabNavigation() {
       />
       <Tab.Screen
         name="상태보드"
-        component={StatusBoardScreen}
+        component={StatusBoardTab}
         options={{
           tabBarIcon: ({ focused }) => (focused ? <StatusBoardFill /> : <StatusBoardPrimary />),
           header: () => <NavigationHeader insets={insets} HeaderTitle="상태보드" />,
