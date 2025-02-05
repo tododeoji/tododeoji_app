@@ -13,8 +13,18 @@ import CloseIcon from './close.svg';
 import LinkIcon from './link.svg';
 import CameraIcon from './camera.svg';
 import MoveIcon from './move.svg';
+import TodoIcon from './todo';
+import ProgressIcon from './Progress';
+import DoneIcon from './Done';
+import FloatingAddIcon from './floating-add.svg';
+import DuzyIcon from './duzy.svg';
 
 export {
+  DuzyIcon,
+  FloatingAddIcon,
+  DoneIcon,
+  ProgressIcon,
+  TodoIcon,
   MoveIcon,
   CameraIcon,
   LinkIcon,

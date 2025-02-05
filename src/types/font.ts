@@ -3,4 +3,4 @@ export type FontStyleType = {
   lineHeight: number;
 };
 
-export type FontFamilyType = 'Pretendard-Regular' | 'Pretendard-Bold';
+export type FontFamilyType = 'Pretendard-Regular' | 'Pretendard-SemiBold' | 'Pretendard-Bold';

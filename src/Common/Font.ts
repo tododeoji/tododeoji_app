@@ -7,9 +7,11 @@ export const FontStyle = {
   description2: { fontSize: 14, lineHeight: 22 },
   caption1: { fontSize: 12, lineHeight: 19 },
   caption2: { fontSize: 10, lineHeight: 17 },
+  caption3: { fontSize: 7, lineHeight: 8 },
 };
 
 export const FontFamily = {
   REGULAR: 'Pretendard-Regular' as const,
+  SEMIBOLD: 'Pretendard-SemiBold' as const,
   BOLD: 'Pretendard-Bold' as const,
 };
