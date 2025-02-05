@@ -14,6 +14,7 @@ import { NavigateLeft, NavigateRight } from '../../assets/icons';
 import { useExpandedStore, useSelectedDateStore } from '../../stores/home';
 import { formatDate } from '../../lib/formatDate';
 import { TodoItem } from '../../types/todo';
+import { fadeIn, fadeOut } from '../../lib/viewAnimation';
 
 interface TodosByDate {
   [key: string]: {
@@ -22,6 +23,8 @@ interface TodosByDate {
 }
 
 const HomeScreen = ({ navigation }: any) => {
+  const changeMonthFadeAnim = useSharedValue(1);
+
   const insets = useSafeAreaInsets();
   const newDate = new Date();
 
@@ -148,16 +151,30 @@ const HomeScreen = ({ navigation }: any) => {
   const days = getDaysInMonth(currentMonth);
 
   const setLastMonth = () => {
+    fadeOut(changeMonthFadeAnim);
     const date = new Date(currentMonth);
     date.setMonth(date.getMonth() - 1);
     setCurrentMonth(date);
+    setTimeout(() => {
+      fadeIn(changeMonthFadeAnim);
+    }, 100);
   };
 
   const setNextMonth = () => {
+    fadeOut(changeMonthFadeAnim);
     const date = new Date(currentMonth);
     date.setMonth(date.getMonth() + 1);
     setCurrentMonth(date);
+    setTimeout(() => {
+      fadeIn(changeMonthFadeAnim);
+    }, 100);
   };
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: changeMonthFadeAnim.value,
+    };
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -171,8 +188,13 @@ const HomeScreen = ({ navigation }: any) => {
               <Pressable
                 style={{ backgroundColor: Color.yellow, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 15 }}
                 onPress={() => {
+                  currentMonth.getMonth() !== newDate.getMonth() && fadeOut(changeMonthFadeAnim);
                   setCurrentMonth(newDate);
                   setSelectedDate(formatDate(newDate));
+                  currentMonth.getMonth() !== newDate.getMonth() &&
+                    setTimeout(() => {
+                      fadeIn(changeMonthFadeAnim);
+                    }, 100);
                 }}
               >
                 <Text>오늘</Text>
@@ -205,7 +227,7 @@ const HomeScreen = ({ navigation }: any) => {
 
   return (
     <>
-      <Animated.View style={[styles.calendar, { minHeight: days.length > 35 ? 382 : 345 }, animatedStyles]}>
+      <Animated.View style={[styles.calendar, { minHeight: days.length > 35 ? 410 : 345 }, animatedStyles]}>
         <GestureDetector gesture={Gesture.Race(swipeGesture)}>
           <View style={{ flex: 1 }}>
             <View style={styles.weekHeader}>
@@ -219,21 +241,27 @@ const HomeScreen = ({ navigation }: any) => {
                 </Text>
               ))}
             </View>
-
-            <ScrollView
-              ref={scrollViewRef}
-              scrollEnabled={isExpanded}
-              showsVerticalScrollIndicator={false}
-              scrollEventThrottle={16}
-              directionalLockEnabled
-              simultaneousHandlers={[panGestureRef]}
-            >
-              <View style={styles.daysContainerContent}>
-                {days.map((day, index) => (
-                  <CalendarDayContainer key={index} dayInfo={day} dayCount={days.length} TodoDataList={TodoDataList} />
-                ))}
-              </View>
-            </ScrollView>
+            <Animated.View style={[animatedStyle]}>
+              <ScrollView
+                ref={scrollViewRef}
+                scrollEnabled={isExpanded}
+                showsVerticalScrollIndicator={false}
+                scrollEventThrottle={16}
+                directionalLockEnabled
+                simultaneousHandlers={[panGestureRef]}
+              >
+                <View style={styles.daysContainerContent}>
+                  {days.map((day, index) => (
+                    <CalendarDayContainer
+                      key={index}
+                      dayInfo={day}
+                      dayCount={days.length}
+                      TodoDataList={TodoDataList}
+                    />
+                  ))}
+                </View>
+              </ScrollView>
+            </Animated.View>
           </View>
         </GestureDetector>
       </Animated.View>
