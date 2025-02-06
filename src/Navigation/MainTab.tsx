@@ -3,7 +3,7 @@ import React from 'react';
 import { BottomTabNavigationProp, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 
-import { HomeScreen, MyPageScreen, StatusBoardScreen } from '../Screens';
+import { HomeScreen, MyPageScreen } from '../Screens';
 import Color from '../Common/Color';
 import { FontFamily, FontStyle } from '../Common/Font';
 import { NavigationHeader, Text, TouchableSVG } from '../Components/Common';
@@ -21,6 +21,7 @@ import {
 } from '../assets/icons';
 import { RootStackParamList, TabParamList } from '../types/navigator';
 import { StackNavigationProp } from '@react-navigation/stack';
+import StatusBoardTab from './StatusBoardTab';
 
 type CombinedNavProp = CompositeNavigationProp<
   BottomTabNavigationProp<TabParamList>,
@@ -55,7 +56,7 @@ function MainTabNavigation() {
       />
       <Tab.Screen
         name="상태보드"
-        component={StatusBoardScreen}
+        component={StatusBoardTab}
         options={{
           tabBarIcon: ({ focused }) => (focused ? <StatusBoardFill /> : <StatusBoardPrimary />),
           header: () => <NavigationHeader insets={insets} HeaderTitle="상태보드" />,

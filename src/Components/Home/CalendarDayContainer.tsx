@@ -4,11 +4,11 @@ import Text from '../Common/Text';
 import { FontFamily, FontStyle } from '../../Common/Font';
 import Color from '../../Common/Color';
 import { useExpandedStore, useSelectedDateStore } from '../../stores/home';
-import { formatDate } from '../../lib/formatDate';
 import Animated, { Easing, interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import dayjs from 'dayjs';
 
 interface CalendarDayContainerProps {
-  dayInfo: { date: Date; disabled: boolean };
+  dayInfo: { date: dayjs.Dayjs; disabled: boolean };
   dayCount: number;
   TodoDataList: any;
 }
@@ -41,17 +41,16 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
       easing: Easing.linear,
     });
   }, [isExpanded]);
+  console.log(selectedDate, dayjs(dayInfo.date).format('YYYY-MM-DD'));
+  const todos = TodoDataList[dayjs(dayInfo.date).format('YYYY-MM-DD')]?.todos || [];
 
-  const dateString = formatDate(dayInfo.date);
-  const todos = TodoDataList[dateString]?.todos || [];
-
-  const isToday = new Date().toDateString() === dayInfo.date.toDateString();
-  const isSelected = selectedDate === dateString;
+  const isToday = dayjs().format('YY-MM-DD') === dayjs(dayInfo.date).format('YY-MM-DD');
+  const isSelected = selectedDate === dayjs(dayInfo.date).format('YYYY-MM-DD');
 
   const handleDayPress = () => {
-    console.log('Selected date:', dateString);
-    dateString === selectedDate ? toggleExpanded() : setIsExpanded(false);
-    setSelectedDate(dateString);
+    console.log('Selected date:', dayjs(dayInfo.date).format('YYYY-MM-DD'));
+    dayjs(dayInfo.date).format('YYYY-MM-DD') === selectedDate ? toggleExpanded() : setIsExpanded(false);
+    setSelectedDate(dayjs(dayInfo.date).format('YYYY-MM-DD'));
   };
 
   return (
@@ -66,7 +65,9 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
           isSelected && { backgroundColor: Color.yellow },
         ]}
       >
-        <Text style={{ color: dayInfo.disabled ? '#ccc' : '#000', textAlign: 'center' }}>{dayInfo.date.getDate()}</Text>
+        <Text style={{ color: dayInfo.disabled ? '#ccc' : '#000', textAlign: 'center' }}>
+          {dayjs(dayInfo.date).format('D')}
+        </Text>
       </View>
       <>
         {todos.map(

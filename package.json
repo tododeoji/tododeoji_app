@@ -7,12 +7,15 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "build-android": "cd android && ./gradlew clean && ./gradlew assembleRelease && ./gradlew bundleRelease && open . && cd .."
   },
   "dependencies": {
     "@react-navigation/bottom-tabs": "^7.2.0",
+    "@react-navigation/material-top-tabs": "^7.1.0",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/stack": "^7.1.1",
+    "dayjs": "^1.11.13",
     "react": "18.3.1",
     "react-hook-form": "^7.54.2",
     "react-native": "0.76.5",
@@ -20,12 +23,14 @@
     "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "^2.21.2",
     "react-native-image-picker": "^7.2.3",
+    "react-native-pager-view": "^6.7.0",
     "react-native-reanimated": "^3.16.7",
     "react-native-safe-area-context": "^5.0.0",
     "react-native-shadow-2": "^7.1.1",
     "react-native-splash-screen": "^3.3.0",
     "react-native-svg": "^15.10.1",
     "react-native-swipe-gestures": "^1.0.5",
+    "react-native-tab-view": "^4.0.5",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
