@@ -1,13 +1,16 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from '../../Components/Common';
+import MainTodoList from '../../Components/Home/MainTodoList';
+import { useTodayListStore } from '../../stores/home';
 
 interface ProgressTabScreenProps {}
 
 function ProgressTabScreen({}: ProgressTabScreenProps) {
+  const { progressList } = useTodayListStore();
+
   return (
     <View style={styles.container}>
-      <Text>진행중</Text>
+      <MainTodoList selectedDateTodos={progressList} />
     </View>
   );
 }

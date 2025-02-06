@@ -1,13 +1,16 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from '../../Components/Common';
+import MainTodoList from '../../Components/Home/MainTodoList';
+import { useTodayListStore } from '../../stores/home';
 
 interface TodoTabScreenProps {}
 
 function TodoTabScreen({}: TodoTabScreenProps) {
+  const { todoList } = useTodayListStore();
+
   return (
     <View style={styles.container}>
-      <Text>할 일</Text>
+      <MainTodoList selectedDateTodos={todoList} />
     </View>
   );
 }

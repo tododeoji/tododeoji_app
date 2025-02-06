@@ -3,6 +3,7 @@ import { View, StyleSheet, Pressable, ViewStyle, DimensionValue } from 'react-na
 import { Gesture, GestureDetector, GestureType, PanGestureHandler, ScrollView } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import dayjs from 'dayjs';
 
 import { NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
 import CalendarDayContainer from '../../Components/Home/CalendarDayContainer';
@@ -11,22 +12,16 @@ import MainTodoList from '../../Components/Home/MainTodoList';
 import Color from '../../Common/Color';
 import { FontStyle } from '../../Common/Font';
 import { NavigateLeft, NavigateRight } from '../../assets/icons';
-import { useExpandedStore, useSelectedDateStore } from '../../stores/home';
-import { formatDate } from '../../lib/formatDate';
-import { TodoItem } from '../../types/todo';
+import { useExpandedStore, useSelectedDateStore, useTodayListStore } from '../../stores/home';
 import { fadeIn, fadeOut } from '../../lib/viewAnimation';
-
-interface TodosByDate {
-  [key: string]: {
-    todos: TodoItem[];
-  };
-}
+import { TodoDataList } from '../../data/mockTodoList';
 
 const HomeScreen = ({ navigation }: any) => {
+  const { setTodoList, setProgressList, setDoneList } = useTodayListStore();
   const changeMonthFadeAnim = useSharedValue(1);
 
   const insets = useSafeAreaInsets();
-  const newDate = new Date();
+  const newDate = dayjs();
 
   const scrollViewRef = useRef<ScrollView>(null);
   const swipeGestureRef = useRef<GestureType | undefined>();
@@ -35,62 +30,6 @@ const HomeScreen = ({ navigation }: any) => {
   const [currentMonth, setCurrentMonth] = useState(newDate);
   const { selectedDate, setSelectedDate } = useSelectedDateStore();
   const { isExpanded, setIsExpanded } = useExpandedStore();
-  const TodoDataList: TodosByDate = {
-    '2025-02-01': {
-      todos: [
-        { id: 1, state: 'done', category: '공부', title: '영어 공부', color: '#FFE5E5' },
-        { id: 2, state: 'todo', category: '공부', title: '송별회', color: '#FF4747' },
-        { id: 3, state: 'progress', category: '공부', title: '세탁기 돌리기', color: '#FF8026' },
-        { id: 4, state: 'todo', category: '공부', title: '과제 제출', color: '#FFC119' },
-        { id: 5, state: 'done', category: '공부', title: '카공', color: '#00D0F9' },
-        { id: 6, state: 'done', category: '공부', title: '코테 준비', color: '#8A4BFF' },
-        { id: 7, state: 'todo', category: '공부', title: '운동하기', color: '#FBE3A2' },
-        { id: 8, state: 'todo', category: '공부', title: '운동하기', color: '#FBE3A2' },
-        {
-          id: 9,
-          state: 'todo',
-          category: '공부',
-          title: '운동하기운동하기운동하기운동하기운동하기운동하기운동하기',
-          color: '#FBE3A2',
-        },
-      ],
-    },
-    '2025-02-02': {
-      todos: [
-        { id: 1, state: 'todo', category: '공부', title: '영어 공부', color: '#FBE3A2' },
-        { id: 2, state: 'done', category: '공부', title: '운동하기', color: '#FF9090' },
-      ],
-    },
-    '2025-02-03': {
-      todos: [
-        { id: 1, state: 'done', category: '공부', title: '영어 공부', color: '#FFAED4' },
-        { id: 2, state: 'todo', category: '공부', title: '운동하기', color: '#A7E793' },
-      ],
-    },
-    '2025-02-27': {
-      todos: [{ id: 3, state: 'todo', category: '공부', title: '프로젝트 회의', color: '#CCCCCC' }],
-    },
-    '2025-02-26': {
-      todos: [
-        { id: 1, state: 'done', category: '공부', title: '영어 공부', color: '#FFE5E5' },
-        { id: 2, state: 'todo', category: '공부', title: '송별회', color: '#FF4747' },
-        { id: 3, state: 'progress', category: '공부', title: '세탁기 돌리기', color: '#FF8026' },
-        { id: 4, state: 'todo', category: '공부', title: '과제 제출', color: '#FFC119' },
-        { id: 5, state: 'done', category: '공부', title: '카공', color: '#00D0F9' },
-        { id: 6, state: 'done', category: '공부', title: '코테 준비', color: '#8A4BFF' },
-      ],
-    },
-    '2025-03-30': {
-      todos: [
-        { id: 1, state: 'done', category: '공부', title: '영어 공부', color: '#FFE5E5' },
-        { id: 2, state: 'todo', category: '공부', title: '송별회', color: '#FF4747' },
-        { id: 3, state: 'progress', category: '공부', title: '세탁기 돌리기', color: '#FF8026' },
-        { id: 4, state: 'todo', category: '공부', title: '과제 제출', color: '#FFC119' },
-        { id: 5, state: 'done', category: '공부', title: '카공', color: '#00D0F9' },
-        { id: 6, state: 'done', category: '공부', title: '코테 준비', color: '#8A4BFF' },
-      ],
-    },
-  };
 
   const calendarHeight = useSharedValue<string | number>('100%');
   const animatedStyles = useAnimatedStyle<ViewStyle>(() => {
@@ -106,22 +45,25 @@ const HomeScreen = ({ navigation }: any) => {
   }, [isExpanded]);
 
   useEffect(() => {
-    setSelectedDate(formatDate(currentMonth));
+    setSelectedDate(currentMonth.format('YYYY-MM-DD'));
+    setTodoList(TodoDataList['2025-02-01']?.todos.filter((data) => data.state === 'todo') || []);
+    setProgressList(TodoDataList['2025-02-01']?.todos.filter((data) => data.state === 'progress') || []);
+    setDoneList(TodoDataList['2025-02-01']?.todos.filter((data) => data.state === 'done') || []);
   }, []);
 
-  const getDaysInMonth = (date: Date) => {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
+  const getDaysInMonth = (date: dayjs.Dayjs) => {
+    const year = date.year();
+    const month = date.month();
+    const firstDay = dayjs(new Date(year, month, 1));
+    const lastDay = dayjs(new Date(year, month + 1, 0));
 
     const days = [];
-    const firstDayOfWeek = firstDay.getDay();
-    const lastDayOfWeek = lastDay.getDay();
+    const firstDayOfWeek = firstDay.day();
+    const lastDayOfWeek = lastDay.day();
 
     // 이전 달의 날짜들
     for (let i = 0; i < firstDayOfWeek; i++) {
-      const prevDate = new Date(year, month, -i);
+      const prevDate = firstDay.subtract(i + 1, 'day');
       days.unshift({
         date: prevDate,
         disabled: true,
@@ -129,16 +71,16 @@ const HomeScreen = ({ navigation }: any) => {
     }
 
     // 현재 달의 날짜들
-    for (let i = 1; i <= lastDay.getDate(); i++) {
+    for (let i = 1; i <= lastDay.date(); i++) {
       days.push({
-        date: new Date(year, month, i),
+        date: dayjs(new Date(year, month, i)),
         disabled: false,
       });
     }
 
     // 다음 달의 날짜들
     for (let i = 1; i <= 6 - lastDayOfWeek; i++) {
-      const nextDate = new Date(year, month + 1, i);
+      const nextDate = lastDay.add(i, 'day');
       days.push({
         date: nextDate,
         disabled: true,
@@ -152,9 +94,7 @@ const HomeScreen = ({ navigation }: any) => {
 
   const setLastMonth = () => {
     fadeOut(changeMonthFadeAnim);
-    const date = new Date(currentMonth);
-    date.setMonth(date.getMonth() - 1);
-    setCurrentMonth(date);
+    setCurrentMonth(currentMonth.subtract(1, 'month'));
     setTimeout(() => {
       fadeIn(changeMonthFadeAnim);
     }, 100);
@@ -162,9 +102,7 @@ const HomeScreen = ({ navigation }: any) => {
 
   const setNextMonth = () => {
     fadeOut(changeMonthFadeAnim);
-    const date = new Date(currentMonth);
-    date.setMonth(date.getMonth() + 1);
-    setCurrentMonth(date);
+    setCurrentMonth(currentMonth.add(1, 'month'));
     setTimeout(() => {
       fadeIn(changeMonthFadeAnim);
     }, 100);
@@ -181,17 +119,17 @@ const HomeScreen = ({ navigation }: any) => {
       header: () => (
         <NavigationHeader
           insets={insets}
-          HeaderTitle={`${currentMonth.getFullYear()}년 ${currentMonth.getMonth() + 1}월`}
+          HeaderTitle={`${currentMonth.year()}년 ${currentMonth.month() + 1}월`}
           RightComponent={
             <View style={styles.homeHeader}>
               <TouchableSVG SVG={NavigateLeft} onPress={setLastMonth} fill={Color.white} />
               <Pressable
                 style={{ backgroundColor: Color.yellow, paddingHorizontal: 12, paddingVertical: 4, borderRadius: 15 }}
                 onPress={() => {
-                  currentMonth.getMonth() !== newDate.getMonth() && fadeOut(changeMonthFadeAnim);
+                  currentMonth.month() !== newDate.month() && fadeOut(changeMonthFadeAnim);
                   setCurrentMonth(newDate);
-                  setSelectedDate(formatDate(newDate));
-                  currentMonth.getMonth() !== newDate.getMonth() &&
+                  setSelectedDate(newDate.format('YYYY-MM-DD'));
+                  currentMonth.month() !== newDate.month() &&
                     setTimeout(() => {
                       fadeIn(changeMonthFadeAnim);
                     }, 100);

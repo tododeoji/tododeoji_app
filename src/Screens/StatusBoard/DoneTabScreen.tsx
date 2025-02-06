@@ -1,13 +1,16 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from '../../Components/Common';
+import MainTodoList from '../../Components/Home/MainTodoList';
+import { useTodayListStore } from '../../stores/home';
 
 interface DoneTabScreenProps {}
 
 function DoneTabScreen({}: DoneTabScreenProps) {
+  const { doneList } = useTodayListStore();
+
   return (
     <View style={styles.container}>
-      <Text>완료</Text>
+      <MainTodoList selectedDateTodos={doneList} />
     </View>
   );
 }
