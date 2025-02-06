@@ -21,7 +21,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 const HomeScreen = ({ navigation }: any) => {
   const categorySheetRef = useRef<BottomSheetModal>(null);
-  const { openCategorySheet, closeCategorySheet } = useBottomSheetStore();
+  const { setRef, closeCategorySheet } = useBottomSheetStore();
 
   const { setTodoList, setProgressList, setDoneList } = useTodayListStore();
   const changeMonthFadeAnim = useSharedValue(1);
@@ -51,6 +51,7 @@ const HomeScreen = ({ navigation }: any) => {
   }, [isExpanded]);
 
   useEffect(() => {
+    setRef(categorySheetRef);
     setSelectedDate(currentMonth.format('YYYY-MM-DD'));
     setTodoList(TodoDataList['2025-02-01']?.todos.filter((data) => data.state === 'todo') || []);
     setProgressList(TodoDataList['2025-02-01']?.todos.filter((data) => data.state === 'progress') || []);
@@ -210,12 +211,7 @@ const HomeScreen = ({ navigation }: any) => {
           </View>
         </GestureDetector>
       </Animated.View>
-      {!isExpanded && (
-        <MainTodoList
-          selectedDateTodos={selectedDateTodos}
-          openBottomSheet={() => openCategorySheet(categorySheetRef)}
-        />
-      )}
+      {!isExpanded && <MainTodoList selectedDateTodos={selectedDateTodos} />}
 
       <DeleteTodoModal />
       <CategorySheet ref={categorySheetRef} onCloseSheet={() => closeCategorySheet(categorySheetRef)} />

@@ -56,10 +56,13 @@ export const useDeleteTodoModalStore = create<deleteTodoModalStoreState>((set) =
 }));
 
 interface categorySheetStoreState {
+  ref?: React.RefObject<BottomSheetModal>;
+  setRef: (ref: React.RefObject<BottomSheetModal>) => void;
   openCategorySheet: (ref: React.RefObject<BottomSheetModal>) => void;
   closeCategorySheet: (ref: React.RefObject<BottomSheetModal>) => void;
 }
-export const useBottomSheetStore = create<categorySheetStoreState>(() => ({
+export const useBottomSheetStore = create<categorySheetStoreState>((set) => ({
+  setRef: (ref: React.RefObject<BottomSheetModal>) => set({ ref }),
   openCategorySheet: (ref: React.RefObject<BottomSheetModal>) => {
     console.log('openSheet');
     ref?.current?.present();

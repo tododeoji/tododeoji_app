@@ -8,14 +8,11 @@ import Color from '../../Common/Color';
 import { TodoItem } from '../../types/todo';
 import TodoItemContainer from '../TodoItemContainer';
 import { DuzyIcon, FloatingAddIcon } from '../../assets/icons';
+import { useBottomSheetStore } from '../../stores/home';
 
-export default function MainTodoList({
-  selectedDateTodos,
-  openBottomSheet,
-}: {
-  selectedDateTodos: TodoItem[];
-  openBottomSheet: () => void;
-}) {
+export default function MainTodoList({ selectedDateTodos }: { selectedDateTodos: TodoItem[] }) {
+  const { openCategorySheet, ref } = useBottomSheetStore();
+
   return (
     <View style={styles.todoListContainer}>
       {selectedDateTodos.length > 0 ? (
@@ -45,7 +42,7 @@ export default function MainTodoList({
         }}
         onPress={() => {
           console.log('press Floating Button');
-          openBottomSheet();
+          ref && openCategorySheet(ref);
         }}
       >
         <Shadow
