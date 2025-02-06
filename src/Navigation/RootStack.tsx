@@ -5,6 +5,7 @@ import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as MyPage from '../Screens/MyPage';
 import { RootStackParamList } from '../types/navigator';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -19,13 +20,19 @@ function RootStackNavigator() {
   return (
     <NavigationContainer theme={navTheme}>
       <GestureHandlerRootView>
-        <Stack.Navigator>
-          <Stack.Screen name="main" component={MainTabNavigation} options={{ animation: 'fade', headerShown: false }} />
+        <BottomSheetModalProvider>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="main"
+              component={MainTabNavigation}
+              options={{ animation: 'fade', headerShown: false }}
+            />
 
-          <Stack.Screen name="editProfile" component={MyPage.EditProfileScreen} />
-          <Stack.Screen name="category" component={MyPage.CategoryScreen} />
-          <Stack.Screen name="setting" component={MyPage.SettingScreen} />
-        </Stack.Navigator>
+            <Stack.Screen name="editProfile" component={MyPage.EditProfileScreen} />
+            <Stack.Screen name="category" component={MyPage.CategoryScreen} />
+            <Stack.Screen name="setting" component={MyPage.SettingScreen} />
+          </Stack.Navigator>
+        </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </NavigationContainer>
   );

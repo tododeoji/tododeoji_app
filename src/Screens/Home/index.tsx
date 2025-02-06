@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Pressable, ViewStyle, DimensionValue } from 'react-native';
 import { Gesture, GestureDetector, GestureType, PanGestureHandler, ScrollView } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -12,12 +12,17 @@ import MainTodoList from '../../Components/Home/MainTodoList';
 import Color from '../../Common/Color';
 import { FontStyle } from '../../Common/Font';
 import { NavigateLeft, NavigateRight } from '../../assets/icons';
-import { useExpandedStore, useSelectedDateStore, useTodayListStore } from '../../stores/home';
+import { useBottomSheetStore, useExpandedStore, useSelectedDateStore, useTodayListStore } from '../../stores/home';
 import { fadeIn, fadeOut } from '../../lib/viewAnimation';
 import { TodoDataList } from '../../data/mockTodoList';
 import DeleteTodoModal from '../../Components/Modal/DeleteTodoModal';
+import CategorySheet from '../../Components/Modal/CategorySheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 const HomeScreen = ({ navigation }: any) => {
+  const categorySheetRef = useRef<BottomSheetModal>(null);
+  const { openCategorySheet, closeCategorySheet } = useBottomSheetStore();
+
   const { setTodoList, setProgressList, setDoneList } = useTodayListStore();
   const changeMonthFadeAnim = useSharedValue(1);
 
@@ -205,8 +210,15 @@ const HomeScreen = ({ navigation }: any) => {
           </View>
         </GestureDetector>
       </Animated.View>
-      {!isExpanded && <MainTodoList selectedDateTodos={selectedDateTodos} />}
+      {!isExpanded && (
+        <MainTodoList
+          selectedDateTodos={selectedDateTodos}
+          openBottomSheet={() => openCategorySheet(categorySheetRef)}
+        />
+      )}
+
       <DeleteTodoModal />
+      <CategorySheet ref={categorySheetRef} onCloseSheet={() => closeCategorySheet(categorySheetRef)} />
     </>
   );
 };

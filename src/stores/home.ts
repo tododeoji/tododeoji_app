@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { TodoItem } from '../types/todo';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 
 interface SelectedDateStoreState {
   selectedDate: string;
@@ -52,4 +53,19 @@ export const useDeleteTodoModalStore = create<deleteTodoModalStoreState>((set) =
   openDeleteTodoModal: () => set({ isVisible: true }),
   closeDeleteTodoModal: () => set({ isVisible: false }),
   setDeleteItem: (deleteItem: TodoItem) => set({ deleteItem }),
+}));
+
+interface categorySheetStoreState {
+  openCategorySheet: (ref: React.RefObject<BottomSheetModal>) => void;
+  closeCategorySheet: (ref: React.RefObject<BottomSheetModal>) => void;
+}
+export const useBottomSheetStore = create<categorySheetStoreState>(() => ({
+  openCategorySheet: (ref: React.RefObject<BottomSheetModal>) => {
+    console.log('openSheet');
+    ref?.current?.present();
+  },
+  closeCategorySheet: (ref: React.RefObject<BottomSheetModal>) => {
+    console.log('closeSheet');
+    ref?.current?.close();
+  },
 }));

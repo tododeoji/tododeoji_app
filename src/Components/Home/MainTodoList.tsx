@@ -9,7 +9,13 @@ import { TodoItem } from '../../types/todo';
 import TodoItemContainer from '../TodoItemContainer';
 import { DuzyIcon, FloatingAddIcon } from '../../assets/icons';
 
-export default function MainTodoList({ selectedDateTodos }: { selectedDateTodos: TodoItem[] }) {
+export default function MainTodoList({
+  selectedDateTodos,
+  openBottomSheet,
+}: {
+  selectedDateTodos: TodoItem[];
+  openBottomSheet: () => void;
+}) {
   return (
     <View style={styles.todoListContainer}>
       {selectedDateTodos.length > 0 ? (
@@ -37,7 +43,10 @@ export default function MainTodoList({ selectedDateTodos }: { selectedDateTodos:
           flexDirection: 'row',
           justifyContent: 'center',
         }}
-        onPress={() => console.log('press Floating Button')}
+        onPress={() => {
+          console.log('press Floating Button');
+          openBottomSheet();
+        }}
       >
         <Shadow
           distance={10}
