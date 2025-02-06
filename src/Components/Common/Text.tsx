@@ -10,6 +10,7 @@ type TextProps = {
   color?: string;
   fontStyle?: FontStyleType;
   fontFamily?: FontFamilyType;
+  textAlign?: 'left' | 'auto' | 'center' | 'right' | 'justify';
 } & RNTextProps;
 
 const Text = ({
@@ -18,6 +19,7 @@ const Text = ({
   color = Color.black,
   fontStyle = FontStyle.description2,
   fontFamily = FontFamily.REGULAR,
+  textAlign = 'left',
   ...rest
 }: TextProps) => {
   const textStyle = useMemo(
@@ -25,6 +27,7 @@ const Text = ({
       color,
       padding: 0,
       fontFamily,
+      textAlign,
       ...fontStyle,
     }),
     [color, fontFamily, fontStyle],
