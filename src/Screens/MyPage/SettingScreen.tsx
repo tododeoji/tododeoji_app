@@ -1,16 +1,20 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import { NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowBack } from '../../assets/icons';
 import Color from '../../Common/Color';
 import { FontFamily, FontStyle } from '../../Common/Font';
+import DeleteAccountModal from '../../Components/Modal/DeleteAccount';
+import LogoutModal from '../../Components/Modal/LogoutModal';
 
 interface MyPageScreenProps {
   navigation: any;
 }
 
 function MyPageScreen({ navigation }: MyPageScreenProps) {
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [deleteAccountModalVisible, setDeleteAccountModalVisible] = useState(false);
   const LinkMenu = [
     { title: '공지사항', url: 'https://github.com/tododeoji' },
     { title: '문의하기', url: 'https://github.com/tododeoji' },
@@ -35,36 +39,44 @@ function MyPageScreen({ navigation }: MyPageScreenProps) {
   }, [insets, navigation]);
 
   return (
-    <View style={styles.Container}>
-      {LinkMenu.map(({ title, url, version = '' }, index) => (
-        <Pressable
-          key={index + title}
-          onPress={() => url && Linking.openURL(url)}
-          style={[
-            styles.LinkButton,
-            (index + 1) % 2 === 0
-              ? { borderBottomRightRadius: 8, borderBottomLeftRadius: 8, marginBottom: 24 }
-              : { borderTopRightRadius: 8, borderTopLeftRadius: 8, marginBottom: 1 },
-          ]}
-        >
-          <Text>{title}</Text>
-          <Text color={Color.gray3}>{version}</Text>
-        </Pressable>
-      ))}
+    <>
+      <View style={styles.Container}>
+        {LinkMenu.map(({ title, url, version = '' }, index) => (
+          <Pressable
+            key={index + title}
+            onPress={() => url && Linking.openURL(url)}
+            style={[
+              styles.LinkButton,
+              (index + 1) % 2 === 0
+                ? { borderBottomRightRadius: 8, borderBottomLeftRadius: 8, marginBottom: 24 }
+                : { borderTopRightRadius: 8, borderTopLeftRadius: 8, marginBottom: 1 },
+            ]}
+          >
+            <Text>{title}</Text>
+            <Text color={Color.gray3}>{version}</Text>
+          </Pressable>
+        ))}
 
-      <View style={[styles.AccountButton, { bottom: insets.bottom + 32 }]}>
-        <Pressable>
-          <Text fontFamily={FontFamily.REGULAR} fontStyle={FontStyle.caption1} color={Color.gray3}>
-            로그아웃
-          </Text>
-        </Pressable>
-        <Pressable>
-          <Text fontFamily={FontFamily.REGULAR} fontStyle={FontStyle.caption1} color={Color.gray3}>
-            계정 삭제
-          </Text>
-        </Pressable>
+        <View style={[styles.AccountButton, { bottom: insets.bottom + 32 }]}>
+          <Pressable onPress={() => setLogoutModalVisible(true)}>
+            <Text fontFamily={FontFamily.REGULAR} fontStyle={FontStyle.caption1} color={Color.gray3}>
+              로그아웃
+            </Text>
+          </Pressable>
+          <Pressable onPress={() => setDeleteAccountModalVisible(true)}>
+            <Text fontFamily={FontFamily.REGULAR} fontStyle={FontStyle.caption1} color={Color.gray3}>
+              계정 삭제
+            </Text>
+          </Pressable>
+        </View>
       </View>
-    </View>
+
+      <LogoutModal isVisible={logoutModalVisible} closeModal={() => setLogoutModalVisible(false)} />
+      <DeleteAccountModal
+        isVisible={deleteAccountModalVisible}
+        closeModal={() => setDeleteAccountModalVisible(false)}
+      />
+    </>
   );
 }
 
