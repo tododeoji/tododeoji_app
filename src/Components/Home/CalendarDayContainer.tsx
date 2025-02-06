@@ -62,7 +62,7 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
         style={[
           styles.dayTextContainer,
           isToday && { backgroundColor: Color.gray1 },
-          isSelected && { backgroundColor: Color.yellow },
+          isSelected && { backgroundColor: Color.yellow, borderRadius: 12 },
         ]}
       >
         <Text style={{ color: dayInfo.disabled ? '#ccc' : '#000', textAlign: 'center' }}>
