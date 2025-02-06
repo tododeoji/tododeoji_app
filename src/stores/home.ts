@@ -39,3 +39,17 @@ export const useTodayListStore = create<TodayListStoreState>((set) => ({
   setProgressList: (progressList: TodoItem[]) => set({ progressList }),
   setDoneList: (doneList: TodoItem[]) => set({ doneList }),
 }));
+
+interface deleteTodoModalStoreState {
+  isVisible: boolean;
+  deleteItem?: TodoItem;
+  openDeleteTodoModal: () => void;
+  closeDeleteTodoModal: () => void;
+  setDeleteItem: (deleteItem: TodoItem) => void;
+}
+export const useDeleteTodoModalStore = create<deleteTodoModalStoreState>((set) => ({
+  isVisible: false,
+  openDeleteTodoModal: () => set({ isVisible: true }),
+  closeDeleteTodoModal: () => set({ isVisible: false }),
+  setDeleteItem: (deleteItem: TodoItem) => set({ deleteItem }),
+}));

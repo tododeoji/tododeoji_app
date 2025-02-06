@@ -6,12 +6,14 @@ import { FontStyle } from '../Common/Font';
 import Color from '../Common/Color';
 import { DoneIcon, ProgressIcon, TodoIcon } from '../assets/icons';
 import { TodoItem } from '../types/todo';
+import { useDeleteTodoModalStore } from '../stores/home';
 
 interface TodoItemProps {
   todo: TodoItem;
 }
 
 function TodoItemContainer({ todo }: TodoItemProps) {
+  const { openDeleteTodoModal, setDeleteItem } = useDeleteTodoModalStore();
   const swipeableRef = useRef(null);
 
   const StateIcon = ({ state, color = Color.black }: { state: string; color?: string }) => {
@@ -31,7 +33,8 @@ function TodoItemContainer({ todo }: TodoItemProps) {
         style={styles.deleteButton}
         onPress={() => {
           (swipeableRef.current as any).close();
-          // TODO: 아이템 삭제
+          setDeleteItem(todo);
+          openDeleteTodoModal();
         }}
       >
         <Text style={styles.deleteButtonText}>삭제</Text>

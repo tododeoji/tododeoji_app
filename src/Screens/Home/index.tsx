@@ -15,6 +15,7 @@ import { NavigateLeft, NavigateRight } from '../../assets/icons';
 import { useExpandedStore, useSelectedDateStore, useTodayListStore } from '../../stores/home';
 import { fadeIn, fadeOut } from '../../lib/viewAnimation';
 import { TodoDataList } from '../../data/mockTodoList';
+import DeleteTodoModal from '../../Components/Modal/DeleteTodoModal';
 
 const HomeScreen = ({ navigation }: any) => {
   const { setTodoList, setProgressList, setDoneList } = useTodayListStore();
@@ -205,6 +206,7 @@ const HomeScreen = ({ navigation }: any) => {
         </GestureDetector>
       </Animated.View>
       {!isExpanded && <MainTodoList selectedDateTodos={selectedDateTodos} />}
+      <DeleteTodoModal />
     </>
   );
 };
