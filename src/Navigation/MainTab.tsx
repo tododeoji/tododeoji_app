@@ -3,7 +3,7 @@ import React from 'react';
 import { BottomTabNavigationProp, createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 
-import { HomeScreen, MyPageScreen, StatusBoardScreen } from '../Screens';
+import { HomeScreen, MyPageScreen } from '../Screens';
 import Color from '../Common/Color';
 import { FontFamily, FontStyle } from '../Common/Font';
 import { NavigationHeader, Text, TouchableSVG } from '../Components/Common';

@@ -243,6 +243,7 @@ const HomeScreen = ({ navigation }: any) => {
             </View>
             <Animated.View style={[animatedStyle]}>
               <ScrollView
+                style={{ height: '97%' }}
                 ref={scrollViewRef}
                 scrollEnabled={isExpanded}
                 showsVerticalScrollIndicator={false}
