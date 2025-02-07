@@ -16,8 +16,9 @@ import { useBottomSheetStore, useExpandedStore, useSelectedDateStore, useTodayLi
 import { fadeIn, fadeOut } from '../../lib/viewAnimation';
 import { TodoDataList } from '../../data/mockTodoList';
 import DeleteTodoModal from '../../Components/Modal/DeleteTodoModal';
-import CategorySheet from '../../Components/Modal/CategorySheet';
+import UpdateTodoSheet from '../../Components/Modal/UpdateTodoSheet';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useFocusEffect } from '@react-navigation/native';
 
 const HomeScreen = ({ navigation }: any) => {
   const categorySheetRef = useRef<BottomSheetModal>(null);
@@ -57,6 +58,12 @@ const HomeScreen = ({ navigation }: any) => {
     setProgressList(TodoDataList['2025-02-01']?.todos.filter((data) => data.state === 'progress') || []);
     setDoneList(TodoDataList['2025-02-01']?.todos.filter((data) => data.state === 'done') || []);
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      setRef(categorySheetRef);
+    }, []),
+  );
 
   const getDaysInMonth = (date: dayjs.Dayjs) => {
     const year = date.year();
@@ -214,7 +221,7 @@ const HomeScreen = ({ navigation }: any) => {
       {!isExpanded && <MainTodoList selectedDateTodos={selectedDateTodos} />}
 
       <DeleteTodoModal />
-      <CategorySheet ref={categorySheetRef} onCloseSheet={() => closeCategorySheet(categorySheetRef)} />
+      <UpdateTodoSheet ref={categorySheetRef} onCloseSheet={() => closeCategorySheet(categorySheetRef)} />
     </>
   );
 };

@@ -4,3 +4,4 @@ export { default as TouchableSVG } from './TouchableSVG';
 export { default as W } from './W';
 export { default as H } from './H';
 export { default as CustomModal } from './CustomModal';
+export { default as AddFloatingButton } from './AddFloatingButton';

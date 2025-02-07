@@ -1,13 +1,17 @@
-import React, { useCallback, useLayoutEffect, useState, useMemo } from 'react';
+import React, { useCallback, useLayoutEffect, useState, useMemo, useRef } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DraggableFlatList, { DragEndParams, RenderItemParams } from 'react-native-draggable-flatlist';
 import Animated, { useAnimatedStyle, withTiming, runOnJS, useSharedValue } from 'react-native-reanimated';
 
-import { H, NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
+import { AddFloatingButton, H, NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
 import { ArrowBack, MoveIcon } from '../../assets/icons';
 import { FontFamily, FontStyle } from '../../Common/Font';
 import Color from '../../Common/Color';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useBottomSheetStore } from '../../stores/home';
+import CreateCategorySheet from '../../Components/Modal/CreateCategorySheet';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface CategoryItem {
   id: string;
@@ -30,6 +34,8 @@ interface CategoryScreenProps {
 }
 
 function CategoryScreen({ navigation }: CategoryScreenProps) {
+  const { setRef, closeCategorySheet } = useBottomSheetStore();
+  const categorySheetRef = useRef<BottomSheetModal>(null);
   const insets = useSafeAreaInsets();
   const [categories, setCategories] = useState<CategoryItem[]>([
     { id: '1', title: '공부', color: '#FFD700', isHidden: false },
@@ -39,6 +45,12 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
     { id: '5', title: '루틴', color: '#D3D3D3', isHidden: false },
     { id: '6', title: '학교', color: '#98FB98', isHidden: true },
   ]);
+
+  useFocusEffect(
+    useCallback(() => {
+      setRef(categorySheetRef);
+    }, []),
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -138,21 +150,25 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
 
   const keyExtractor = useCallback((item: ListItem) => item.id, []);
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1}>
-          사용 중인 카테고리
-        </Text>
-        <H h={8} />
+    <>
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1}>
+            사용 중인 카테고리
+          </Text>
+          <H h={8} />
+        </View>
+        <DraggableFlatList<ListItem>
+          data={listData}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          onDragEnd={onDragEnd}
+          ListFooterComponent={<H h={insets.bottom ? insets.bottom + 50 : 70} />}
+        />
+        <AddFloatingButton insetsBottom={insets.bottom} />
       </View>
-      <DraggableFlatList<ListItem>
-        data={listData}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        onDragEnd={onDragEnd}
-        ListFooterComponent={<H h={insets.bottom ? insets.bottom + 50 : 70} />}
-      />
-    </View>
+      <CreateCategorySheet ref={categorySheetRef} onCloseSheet={() => closeCategorySheet} />
+    </>
   );
 }
 

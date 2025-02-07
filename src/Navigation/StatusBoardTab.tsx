@@ -1,16 +1,27 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { View } from 'react-native';
 import Color from '../Common/Color';
 import { FontFamily, FontStyle } from '../Common/Font';
 import { DoneTabScreen, ProgressTabScreen, TodoTabScreen } from '../Screens/StatusBoard';
-import { useTodayListStore } from '../stores/home';
+import { useBottomSheetStore, useTodayListStore } from '../stores/home';
 import { Text } from '../Components/Common';
+import UpdateTodoSheet from '../Components/Modal/UpdateTodoSheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useFocusEffect } from '@react-navigation/native';
 
 const Tab = createMaterialTopTabNavigator();
 
 function StatusBoardTab() {
   const { todoList, progressList, doneList } = useTodayListStore();
+  const categorySheetRef = useRef<BottomSheetModal>(null);
+  const { setRef, closeCategorySheet } = useBottomSheetStore();
+
+  useFocusEffect(
+    useCallback(() => {
+      setRef(categorySheetRef);
+    }, []),
+  );
 
   const CustomTabLabel = ({
     title,
@@ -77,6 +88,7 @@ function StatusBoardTab() {
           }}
         />
       </Tab.Navigator>
+      <UpdateTodoSheet ref={categorySheetRef} onCloseSheet={() => closeCategorySheet} />
     </View>
   );
 }
