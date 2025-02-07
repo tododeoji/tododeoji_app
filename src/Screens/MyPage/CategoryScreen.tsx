@@ -167,7 +167,7 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
         />
         <AddFloatingButton insetsBottom={insets.bottom} />
       </View>
-      <CreateCategorySheet ref={categorySheetRef} onCloseSheet={() => closeCategorySheet} />
+      <CreateCategorySheet ref={categorySheetRef} onCloseSheet={closeCategorySheet} insetsBottom={insets.bottom} />
     </>
   );
 }

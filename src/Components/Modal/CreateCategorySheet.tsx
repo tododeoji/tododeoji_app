@@ -1,18 +1,89 @@
-import { StyleSheet, View } from 'react-native';
-import React, { forwardRef, useCallback } from 'react';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import React, { forwardRef, useCallback, useRef, useState } from 'react';
+import { Pressable, StyleSheet, View, Keyboard, Alert } from 'react-native';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetTextInput, BottomSheetView } from '@gorhom/bottom-sheet';
 import { CloseIcon } from '../../assets/icons';
 import { H, Text, TouchableSVG } from '../Common';
 import { FontFamily, FontStyle } from '../../Common/Font';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
 import Color from '../../Common/Color';
+import { TextInput } from 'react-native-gesture-handler';
 
 interface CreateCategorySheetProps {
-  onCloseSheet: (index: number) => void;
+  onCloseSheet: (ref: any) => void;
+  insetsBottom: number;
 }
 
 const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProps>(
   ({ onCloseSheet }: CreateCategorySheetProps, ref) => {
+    const categoryColorList = [
+      'red1',
+      'orange1',
+      'yellow1',
+      'green1',
+      'blue1',
+      'purple1',
+      'pink1',
+      'gray1',
+      'red2',
+      'orange2',
+      'yellow2',
+      'green2',
+      'blue2',
+      'purple2',
+      'pink2',
+      'gray2',
+    ] as const;
+    const [selectedCategoryColor, setSelectedCategoryColor] = useState<
+      | 'red1'
+      | 'orange1'
+      | 'yellow1'
+      | 'green1'
+      | 'blue1'
+      | 'purple1'
+      | 'pink1'
+      | 'gray1'
+      | 'red2'
+      | 'orange2'
+      | 'yellow2'
+      | 'green2'
+      | 'blue2'
+      | 'purple2'
+      | 'pink2'
+      | 'gray2'
+    >();
+    const inputRef = useRef<TextInput>(null);
+    const [categoryName, setCategoryName] = useState('');
+
+    const resetData = useCallback(() => {
+      setSelectedCategoryColor(undefined);
+      setCategoryName('');
+    }, []);
+
+    const handleSheetChange = useCallback((index: number) => {
+      if (index === 0) {
+        inputRef.current?.focus();
+      } else {
+        // closeModal();
+        resetData();
+      }
+    }, []);
+
+    const closeModal = () => {
+      Keyboard.dismiss();
+      setTimeout(() => {
+        onCloseSheet(ref);
+      }, 50);
+    };
+
+    const onSubmit = () => {
+      if (!categoryName.length) Alert.alert('카테고리 이름을 입력해주세요');
+      else if (!selectedCategoryColor) Alert.alert('카테고리 색상을 선택해주세요');
+      else {
+        Alert.alert('submit!!!!!!!!!!!!!');
+        closeModal();
+      }
+    };
+
     const renderBackdrop = useCallback(
       (props: React.JSX.IntrinsicAttributes & BottomSheetDefaultBackdropProps) => (
         <BottomSheetBackdrop
@@ -21,7 +92,7 @@ const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProp
           appearsOnIndex={0}
           opacity={0.4}
           disappearsOnIndex={-1}
-          pressBehavior="close"
+          onPress={closeModal}
         />
       ),
       [],
@@ -29,28 +100,58 @@ const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProp
     return (
       <BottomSheetModal
         ref={ref}
-        onChange={() => {}}
+        onChange={handleSheetChange}
         handleComponent={null}
         enablePanDownToClose={true}
         backdropComponent={renderBackdrop}
+        enableDynamicSizing={true}
       >
-        <BottomSheetView style={styles.container}>
+        <BottomSheetView style={[styles.container]}>
           <View style={styles.headerBox}>
             <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.body1}>
               카테고리 추가
             </Text>
-            <TouchableSVG SVG={CloseIcon} size={20} onPress={onCloseSheet} />
+            <TouchableSVG SVG={CloseIcon} size={20} onPress={closeModal} />
           </View>
           <H h={8} />
           <View>
             <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1} style={styles.caption}>
-              카테고리 이름
+              카테고리 이름 {categoryName?.length || 0} / 10
             </Text>
+            <H />
+            <View>
+              <BottomSheetTextInput
+                ref={inputRef}
+                style={[
+                  styles.input,
+                  selectedCategoryColor && { borderColor: Color.category[selectedCategoryColor], borderWidth: 1.5 },
+                ]}
+                onChangeText={setCategoryName}
+                submitBehavior="submit"
+                onSubmitEditing={onSubmit}
+                autoComplete="off"
+                autoCorrect={false}
+              />
+            </View>
           </View>
+          <H h={8} />
           <View>
             <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1} style={styles.caption}>
               팔레트
             </Text>
+            <View style={styles.palette}>
+              {categoryColorList.map((color) => (
+                <Pressable key={color} onPress={() => setSelectedCategoryColor(color)} style={styles.colorChipBox}>
+                  <View
+                    style={[
+                      styles.colorChip,
+                      { backgroundColor: Color.category[color] },
+                      selectedCategoryColor === color && { width: '100%' },
+                    ]}
+                  />
+                </Pressable>
+              ))}
+            </View>
           </View>
         </BottomSheetView>
       </BottomSheetModal>
@@ -68,7 +169,6 @@ const styles = StyleSheet.create({
     padding: 24,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    minHeight: 300,
   },
   headerBox: {
     width: '100%',
@@ -80,5 +180,37 @@ const styles = StyleSheet.create({
   caption: {
     paddingVertical: 4,
     paddingHorizontal: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: Color.gray2,
+    height: 52,
+    padding: 16,
+    borderRadius: 8,
+    color: Color.black,
+    fontSize: 14,
+  },
+  palette: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    borderWidth: 1,
+    borderColor: Color.gray2,
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  colorChipBox: {
+    width: '12%',
+    aspectRatio: 1 / 1.3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  colorChip: {
+    width: '85%',
+    aspectRatio: 1,
+    marginVertical: 4,
+    borderRadius: 30,
   },
 });

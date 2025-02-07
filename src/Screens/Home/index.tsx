@@ -221,7 +221,11 @@ const HomeScreen = ({ navigation }: any) => {
       {!isExpanded && <MainTodoList selectedDateTodos={selectedDateTodos} />}
 
       <DeleteTodoModal />
-      <UpdateTodoSheet ref={categorySheetRef} onCloseSheet={() => closeCategorySheet(categorySheetRef)} />
+      <UpdateTodoSheet
+        ref={categorySheetRef}
+        onCloseSheet={() => closeCategorySheet(categorySheetRef)}
+        insetsBottom={insets.bottom}
+      />
     </>
   );
 };

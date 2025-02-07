@@ -9,10 +9,11 @@ import Color from '../../Common/Color';
 
 interface UpdateTodoSheetProps {
   onCloseSheet: (index: number) => void;
+  insetsBottom: number;
 }
 
 const UpdateTodoSheet = forwardRef<BottomSheetModal, UpdateTodoSheetProps>(
-  ({ onCloseSheet }: UpdateTodoSheetProps, ref) => {
+  ({ onCloseSheet, insetsBottom }: UpdateTodoSheetProps, ref) => {
     const renderBackdrop = useCallback(
       (props: React.JSX.IntrinsicAttributes & BottomSheetDefaultBackdropProps) => (
         <BottomSheetBackdrop
@@ -34,7 +35,7 @@ const UpdateTodoSheet = forwardRef<BottomSheetModal, UpdateTodoSheetProps>(
         enablePanDownToClose={true}
         backdropComponent={renderBackdrop}
       >
-        <BottomSheetView style={styles.container}>
+        <BottomSheetView style={[styles.container, { paddingBottom: insetsBottom || 0 + 24 }]}>
           <View style={styles.headerBox}>
             <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.body1}>
               할 일 추가
