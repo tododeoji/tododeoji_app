@@ -4,33 +4,16 @@ import { H, Text } from '.';
 import { FontFamily, FontStyle } from '../../Common/Font';
 import Color from '../../Common/Color';
 
-interface ModalButtonType {
-  title: string;
-  backgroundColor: string;
-  color: string;
-}
-
 interface ModalProps {
   isVisible: boolean;
   title: string;
   description: string;
-  leftButton: ModalButtonType;
-  rightButton: ModalButtonType;
-  onPressLeftButton: () => void;
-  onPressRightButton: () => void;
+  leftButton: React.JSX.Element;
+  rightButton: React.JSX.Element;
   closeModal: () => void;
 }
 
-function CustomModal({
-  isVisible,
-  title,
-  description,
-  leftButton,
-  rightButton,
-  onPressLeftButton,
-  onPressRightButton,
-  closeModal,
-}: ModalProps) {
+function CustomModal({ isVisible, title, description, leftButton, rightButton, closeModal }: ModalProps) {
   return (
     <Modal visible={isVisible} transparent={true} animationType="fade">
       <Pressable style={styles.centeredView} onPress={closeModal}>
@@ -48,22 +31,8 @@ function CustomModal({
           </Text>
           <H h={16} />
           <View style={styles.bottomButtonBox}>
-            <Pressable
-              style={[styles.bottomButton, { backgroundColor: leftButton.backgroundColor }]}
-              onPress={onPressLeftButton}
-            >
-              <Text fontFamily={FontFamily.BOLD} color={leftButton.color} textAlign="center">
-                {leftButton.title}
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.bottomButton, { backgroundColor: rightButton.backgroundColor }]}
-              onPress={onPressRightButton}
-            >
-              <Text fontFamily={FontFamily.BOLD} color={rightButton.color} textAlign="center">
-                {rightButton.title}
-              </Text>
-            </Pressable>
+            {leftButton}
+            {rightButton}
           </View>
         </View>
       </Pressable>

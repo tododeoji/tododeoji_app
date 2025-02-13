@@ -1,12 +1,13 @@
-import React, { forwardRef, useCallback, useRef, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, View, Keyboard, Alert } from 'react-native';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetTextInput, BottomSheetView } from '@gorhom/bottom-sheet';
 import { CloseIcon } from '../../assets/icons';
-import { H, Text, TouchableSVG } from '../Common';
+import { ConfirmButton, H, Text, TouchableSVG } from '../Common';
 import { FontFamily, FontStyle } from '../../Common/Font';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
 import Color from '../../Common/Color';
 import { TextInput } from 'react-native-gesture-handler';
+import { useBottomSheetStore } from '../../stores/home';
 
 interface CreateCategorySheetProps {
   onCloseSheet: (ref: any) => void;
@@ -15,6 +16,7 @@ interface CreateCategorySheetProps {
 
 const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProps>(
   ({ onCloseSheet, insetsBottom }: CreateCategorySheetProps, ref) => {
+    const { data } = useBottomSheetStore();
     const categoryColorList = [
       'red1',
       'orange1',
@@ -59,6 +61,10 @@ const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProp
       setCategoryName('');
     }, []);
 
+    useEffect(() => {
+      data && setCategoryName(data.title);
+    }, [data]);
+
     const handleSheetChange = useCallback((index: number) => {
       if (index === 0) {
         // inputRef.current?.focus();
@@ -77,9 +83,9 @@ const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProp
 
     const onSubmit = () => {
       if (!categoryName.length) Alert.alert('카테고리 이름을 입력해주세요');
-      else if (!selectedCategoryColor) Alert.alert('카테고리 색상을 선택해주세요');
+      else if (!selectedCategoryColor && !data?.color) Alert.alert('카테고리 색상을 선택해주세요');
       else {
-        Alert.alert('submit!!!!!!!!!!!!!');
+        Alert.alert(`submit!!!!!!!!!!!!! ${selectedCategoryColor || data?.color}, ${categoryName}`);
         closeModal();
       }
     };
@@ -109,7 +115,7 @@ const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProp
         <BottomSheetView style={[styles.container, { paddingBottom: insetsBottom || 0 + 10 }]}>
           <View style={styles.headerBox}>
             <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.body1}>
-              카테고리 추가
+              카테고리 {data ? '수정' : '추가'}
             </Text>
             <TouchableSVG SVG={CloseIcon} size={20} onPress={closeModal} />
           </View>
@@ -125,7 +131,9 @@ const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProp
                     style={[
                       styles.colorChip,
                       { backgroundColor: Color.category[color] },
-                      selectedCategoryColor === color && { width: '100%' },
+                      selectedCategoryColor
+                        ? selectedCategoryColor === color && { width: '100%' }
+                        : color === data?.color && { width: '100%' },
                     ]}
                   />
                 </Pressable>
@@ -143,13 +151,37 @@ const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProp
                 ref={inputRef}
                 style={[
                   styles.input,
-                  selectedCategoryColor && { borderColor: Color.category[selectedCategoryColor], borderWidth: 1.5 },
+                  data?.color && {
+                    borderColor: Color.category[data?.color],
+                    borderWidth: 1.5,
+                  },
+                  selectedCategoryColor && {
+                    borderColor: Color.category[selectedCategoryColor],
+                    borderWidth: 1.5,
+                  },
                 ]}
                 onChangeText={setCategoryName}
                 submitBehavior="submit"
                 onSubmitEditing={onSubmit}
                 autoComplete="off"
                 autoCorrect={false}
+                defaultValue={data?.title || ''}
+              />
+            </View>
+            <View style={styles.bottomButtonBox}>
+              <ConfirmButton
+                title="삭제하기"
+                color={Color.red}
+                backgroundColor={Color.white}
+                onPressButton={() => {}}
+                width={'40%'}
+              />
+              <ConfirmButton
+                title="수정완료"
+                color={Color.black}
+                backgroundColor={Color.yellow}
+                onPressButton={() => {}}
+                width={'40%'}
               />
             </View>
           </View>
@@ -212,5 +244,10 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     marginVertical: 4,
     borderRadius: 30,
+  },
+  bottomButtonBox: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
   },
 });

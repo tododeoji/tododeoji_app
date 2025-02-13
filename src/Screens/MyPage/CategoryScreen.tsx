@@ -2,7 +2,7 @@ import React, { useCallback, useLayoutEffect, useState, useMemo, useRef } from '
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DraggableFlatList, { DragEndParams, RenderItemParams } from 'react-native-draggable-flatlist';
-import Animated, { useAnimatedStyle, withTiming, runOnJS, useSharedValue } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, withTiming, useSharedValue } from 'react-native-reanimated';
 
 import { AddFloatingButton, H, NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
 import { ArrowBack, MoveIcon } from '../../assets/icons';
@@ -28,7 +28,7 @@ interface CategoryScreenProps {
 }
 
 function CategoryScreen({ navigation }: CategoryScreenProps) {
-  const { setRef, closeCategorySheet } = useBottomSheetStore();
+  const { setRef, closeCategorySheet, openCategorySheet, setData } = useBottomSheetStore();
   const categorySheetRef = useRef<BottomSheetModal>(null);
   const insets = useSafeAreaInsets();
   const [categories, setCategories] = useState<CategoryItem[]>(mockCategoryList);
@@ -113,12 +113,19 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
           >
             <MoveIcon />
           </Pressable>
-          <View style={{ flex: 1 }}>
+          <Pressable
+            onPress={() => {
+              console.log(item);
+              setData(item);
+              openCategorySheet(categorySheetRef);
+            }}
+            style={{ flex: 1 }}
+          >
             <View style={styles.categoryItem}>
               <Text>{item.title}</Text>
               <View style={[styles.colorDot, { backgroundColor: Color.category[item.color] }]} />
             </View>
-          </View>
+          </Pressable>
         </Animated.View>
       );
     },

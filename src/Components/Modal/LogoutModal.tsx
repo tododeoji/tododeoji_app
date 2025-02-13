@@ -1,20 +1,27 @@
 import React from 'react';
-import { CustomModal } from '../Common';
+import { ConfirmButton, CustomModal } from '../Common';
 import Color from '../../Common/Color';
 
 function LogoutModal({ isVisible, closeModal }: { isVisible: boolean; closeModal: () => void }) {
   return (
     <CustomModal
       isVisible={isVisible}
-      title={'삭제하기'}
+      title={'로그아웃'}
       description="로그아웃 하시겠어요?"
-      leftButton={{ title: '취소하기', color: Color.black, backgroundColor: Color.yellow }}
-      rightButton={{ title: '로그아웃', color: Color.black, backgroundColor: Color.white }}
-      onPressLeftButton={closeModal}
-      onPressRightButton={() => {
-        console.log('로그아웃');
-        closeModal();
-      }}
+      leftButton={
+        <ConfirmButton title="취소하기" color={Color.black} backgroundColor={Color.yellow} onPressButton={closeModal} />
+      }
+      rightButton={
+        <ConfirmButton
+          title="로그아웃"
+          color={Color.black}
+          backgroundColor={Color.white}
+          onPressButton={() => {
+            console.log('로그아웃');
+            closeModal();
+          }}
+        />
+      }
       closeModal={closeModal}
     />
   );
