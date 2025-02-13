@@ -14,7 +14,7 @@ interface CreateCategorySheetProps {
 }
 
 const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProps>(
-  ({ onCloseSheet }: CreateCategorySheetProps, ref) => {
+  ({ onCloseSheet, insetsBottom }: CreateCategorySheetProps, ref) => {
     const categoryColorList = [
       'red1',
       'orange1',
@@ -61,7 +61,7 @@ const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProp
 
     const handleSheetChange = useCallback((index: number) => {
       if (index === 0) {
-        inputRef.current?.focus();
+        // inputRef.current?.focus();
       } else {
         // closeModal();
         resetData();
@@ -106,12 +106,31 @@ const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProp
         backdropComponent={renderBackdrop}
         enableDynamicSizing={true}
       >
-        <BottomSheetView style={[styles.container]}>
+        <BottomSheetView style={[styles.container, { paddingBottom: insetsBottom || 0 + 10 }]}>
           <View style={styles.headerBox}>
             <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.body1}>
               카테고리 추가
             </Text>
             <TouchableSVG SVG={CloseIcon} size={20} onPress={closeModal} />
+          </View>
+          <H h={8} />
+          <View>
+            <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1} style={styles.caption}>
+              팔레트
+            </Text>
+            <View style={styles.palette}>
+              {categoryColorList.map((color) => (
+                <Pressable key={color} onPress={() => setSelectedCategoryColor(color)} style={styles.colorChipBox}>
+                  <View
+                    style={[
+                      styles.colorChip,
+                      { backgroundColor: Color.category[color] },
+                      selectedCategoryColor === color && { width: '100%' },
+                    ]}
+                  />
+                </Pressable>
+              ))}
+            </View>
           </View>
           <H h={8} />
           <View>
@@ -132,25 +151,6 @@ const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProp
                 autoComplete="off"
                 autoCorrect={false}
               />
-            </View>
-          </View>
-          <H h={8} />
-          <View>
-            <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1} style={styles.caption}>
-              팔레트
-            </Text>
-            <View style={styles.palette}>
-              {categoryColorList.map((color) => (
-                <Pressable key={color} onPress={() => setSelectedCategoryColor(color)} style={styles.colorChipBox}>
-                  <View
-                    style={[
-                      styles.colorChip,
-                      { backgroundColor: Color.category[color] },
-                      selectedCategoryColor === color && { width: '100%' },
-                    ]}
-                  />
-                </Pressable>
-              ))}
             </View>
           </View>
         </BottomSheetView>

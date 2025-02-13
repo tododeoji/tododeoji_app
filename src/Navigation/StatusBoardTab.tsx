@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { View } from 'react-native';
 import Color from '../Common/Color';
@@ -16,6 +16,10 @@ function StatusBoardTab() {
   const { todoList, progressList, doneList } = useTodayListStore();
   const categorySheetRef = useRef<BottomSheetModal>(null);
   const { setRef, closeCategorySheet } = useBottomSheetStore();
+
+  useEffect(() => {
+    setRef(categorySheetRef);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -53,43 +57,54 @@ function StatusBoardTab() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <Tab.Navigator
-        screenOptions={{
-          tabBarIndicatorStyle: { backgroundColor: Color.yellow, height: 2, width: '25.33%', marginHorizontal: '3.7%' },
-          tabBarStyle: { height: 44 },
-        }}
-      >
-        <Tab.Screen
-          name="todo"
-          component={TodoTabScreen}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <CustomTabLabel title="할 일" listLength={todoList.length} isFocused={focused} />
-            ),
+    <>
+      <View style={{ flex: 1 }}>
+        <Tab.Navigator
+          screenOptions={{
+            tabBarIndicatorStyle: {
+              backgroundColor: Color.yellow,
+              height: 2,
+              width: '25.33%',
+              marginHorizontal: '3.7%',
+            },
+            tabBarStyle: { height: 44 },
           }}
-        />
-        <Tab.Screen
-          name="progress"
-          component={ProgressTabScreen}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <CustomTabLabel title="진행중" listLength={progressList.length} isFocused={focused} />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="done"
-          component={DoneTabScreen}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <CustomTabLabel title="완료" listLength={doneList.length} isFocused={focused} />
-            ),
-          }}
-        />
-      </Tab.Navigator>
-      <UpdateTodoSheet ref={categorySheetRef} onCloseSheet={() => closeCategorySheet} />
-    </View>
+        >
+          <Tab.Screen
+            name="todo"
+            component={TodoTabScreen}
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <CustomTabLabel title="할 일" listLength={todoList.length} isFocused={focused} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="progress"
+            component={ProgressTabScreen}
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <CustomTabLabel title="진행중" listLength={progressList.length} isFocused={focused} />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="done"
+            component={DoneTabScreen}
+            options={{
+              tabBarIcon: ({ focused }) => (
+                <CustomTabLabel title="완료" listLength={doneList.length} isFocused={focused} />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      </View>
+      <UpdateTodoSheet
+        ref={categorySheetRef}
+        onCloseSheet={() => closeCategorySheet(categorySheetRef)}
+        insetsBottom={0}
+      />
+    </>
   );
 }
 

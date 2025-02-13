@@ -12,13 +12,7 @@ import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useBottomSheetStore } from '../../stores/home';
 import CreateCategorySheet from '../../Components/Modal/CreateCategorySheet';
 import { useFocusEffect } from '@react-navigation/native';
-
-interface CategoryItem {
-  id: string;
-  title: string;
-  color: string;
-  isHidden: boolean;
-}
+import { CategoryItem, mockCategoryList } from '../../data/mockCategoryList';
 
 interface HeaderItem {
   id: string;
@@ -37,14 +31,8 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
   const { setRef, closeCategorySheet } = useBottomSheetStore();
   const categorySheetRef = useRef<BottomSheetModal>(null);
   const insets = useSafeAreaInsets();
-  const [categories, setCategories] = useState<CategoryItem[]>([
-    { id: '1', title: '공부', color: '#FFD700', isHidden: false },
-    { id: '2', title: '회사', color: '#90EE90', isHidden: false },
-    { id: '3', title: '집', color: '#87CEEB', isHidden: false },
-    { id: '4', title: '중요', color: '#FFB6C1', isHidden: false },
-    { id: '5', title: '루틴', color: '#D3D3D3', isHidden: false },
-    { id: '6', title: '학교', color: '#98FB98', isHidden: true },
-  ]);
+  const [categories, setCategories] = useState<CategoryItem[]>(mockCategoryList);
+  const isActiveShared = useSharedValue(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -67,7 +55,6 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
   const isHeaderItem = (item: ListItem): item is HeaderItem => 'type' in item && item.type === 'header';
 
   const onDragEnd = useCallback(({ data }: DragEndParams<ListItem>) => {
-    'worklet';
     const hiddenHeaderIndex = data.findIndex((item) => item.id === 'hidden_header');
     const newCategories = data
       .filter((item): item is CategoryItem => !('type' in item))
@@ -75,7 +62,7 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
         ...item,
         isHidden: data.findIndex((dataItem) => dataItem.id === item.id) > hiddenHeaderIndex,
       }));
-    runOnJS(setCategories)(newCategories);
+    setCategories(newCategories);
   }, []);
 
   const EmptySection = useCallback(
@@ -87,20 +74,26 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
     [],
   );
 
-  const isActiveShared = useSharedValue(false);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: withTiming(isActiveShared.value ? 1.05 : 1) }],
-    };
-  }, [isActiveShared.value]);
-
-  // 카테고리 item
   const renderItem = useCallback(
-    ({ item, drag }: RenderItemParams<ListItem>) => {
+    ({ item, drag, isActive }: RenderItemParams<ListItem>) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const animatedStyle = useAnimatedStyle(() => {
+        return {
+          transform: [
+            {
+              scale: withTiming(isActive ? 1.05 : 1, {
+                duration: 100,
+                // easing: Easing.linear,
+              }),
+            },
+          ],
+        };
+      }, [isActive]);
+
       if (isHeaderItem(item)) {
-        if (item.id === 'visible_header')
+        if (item.id === 'visible_header') {
           return item.isEmpty ? <EmptySection title={`${item.title}가 없어요.`} /> : null;
+        }
         return (
           <View style={[styles.headerContainer, item.id === 'hidden_header' && { marginTop: 40 }]}>
             <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1}>
@@ -123,13 +116,13 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
           <View style={{ flex: 1 }}>
             <View style={styles.categoryItem}>
               <Text>{item.title}</Text>
-              <View style={[styles.colorDot, { backgroundColor: item.color }]} />
+              <View style={[styles.colorDot, { backgroundColor: Color.category[item.color] }]} />
             </View>
           </View>
         </Animated.View>
       );
     },
-    [animatedStyle, isActiveShared],
+    [isActiveShared],
   );
 
   const listData = useMemo(() => {
