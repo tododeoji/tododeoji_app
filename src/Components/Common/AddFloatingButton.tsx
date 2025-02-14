@@ -4,7 +4,7 @@ import { Shadow } from 'react-native-shadow-2';
 import { FloatingAddIcon } from '../../assets/icons';
 import { useBottomSheetStore } from '../../stores/home';
 
-function AddFloatingButton({ insetsBottom = 0 }: { insetsBottom?: number }) {
+function AddFloatingButton({ insetsBottom = 0, onPress }: { insetsBottom?: number; onPress?: () => void }) {
   const { openCategorySheet, ref } = useBottomSheetStore();
   return (
     <Pressable
@@ -12,6 +12,7 @@ function AddFloatingButton({ insetsBottom = 0 }: { insetsBottom?: number }) {
       onPress={() => {
         console.log('press Floating Button');
         ref && openCategorySheet(ref);
+        onPress && onPress();
       }}
     >
       <Shadow distance={10} offset={[0, 10]} startColor={'#C8C8C8'} style={styles.shadow} />

@@ -1,22 +1,28 @@
 import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, StyleSheet, View, Keyboard, Alert } from 'react-native';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetTextInput, BottomSheetView } from '@gorhom/bottom-sheet';
+import { Dimensions, Pressable, StyleSheet, View, Keyboard, Alert } from 'react-native';
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+  BottomSheetTextInput,
+} from '@gorhom/bottom-sheet';
 import { CloseIcon } from '../../assets/icons';
 import { ConfirmButton, H, Text, TouchableSVG } from '../Common';
 import { FontFamily, FontStyle } from '../../Common/Font';
 import { BottomSheetDefaultBackdropProps } from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheetBackdrop/types';
 import Color from '../../Common/Color';
 import { TextInput } from 'react-native-gesture-handler';
-import { useBottomSheetStore } from '../../stores/home';
+import { CategoryItem } from '../../data/mockCategoryList';
 
 interface CreateCategorySheetProps {
   onCloseSheet: (ref: any) => void;
   insetsBottom: number;
+  data?: CategoryItem;
 }
 
 const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProps>(
-  ({ onCloseSheet, insetsBottom }: CreateCategorySheetProps, ref) => {
-    const { data } = useBottomSheetStore();
+  ({ onCloseSheet, data }: CreateCategorySheetProps, ref) => {
+    const { width } = Dimensions.get('screen');
     const categoryColorList = [
       'red1',
       'orange1',
@@ -107,19 +113,19 @@ const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProp
       <BottomSheetModal
         ref={ref}
         onChange={handleSheetChange}
-        handleComponent={null}
-        enablePanDownToClose={true}
-        backdropComponent={renderBackdrop}
-        enableDynamicSizing={true}
-      >
-        <BottomSheetView style={[styles.container, { paddingBottom: insetsBottom || 0 + 10 }]}>
+        handleComponent={() => (
           <View style={styles.headerBox}>
             <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.body1}>
               카테고리 {data ? '수정' : '추가'}
             </Text>
             <TouchableSVG SVG={CloseIcon} size={20} onPress={closeModal} />
           </View>
-          <H h={8} />
+        )}
+        enablePanDownToClose={true}
+        backdropComponent={renderBackdrop}
+        enableDynamicSizing={true}
+      >
+        <BottomSheetScrollView style={[styles.container]}>
           <View>
             <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1} style={styles.caption}>
               팔레트
@@ -168,24 +174,30 @@ const CreateCategorySheet = forwardRef<BottomSheetModal, CreateCategorySheetProp
                 defaultValue={data?.title || ''}
               />
             </View>
-            <View style={styles.bottomButtonBox}>
-              <ConfirmButton
-                title="삭제하기"
-                color={Color.red}
-                backgroundColor={Color.white}
-                onPressButton={() => {}}
-                width={'40%'}
-              />
-              <ConfirmButton
-                title="수정완료"
-                color={Color.black}
-                backgroundColor={Color.yellow}
-                onPressButton={() => {}}
-                width={'40%'}
-              />
-            </View>
+            {data && (
+              <View>
+                <H h={24} />
+                <View style={styles.bottomButtonBox}>
+                  <ConfirmButton
+                    title="삭제하기"
+                    color={Color.red}
+                    backgroundColor={Color.white}
+                    onPressButton={() => {}}
+                    width={width / 2 - 30}
+                  />
+                  <ConfirmButton
+                    title="수정완료"
+                    color={Color.black}
+                    backgroundColor={Color.yellow}
+                    onPressButton={() => {}}
+                    width={width / 2 - 30}
+                  />
+                </View>
+              </View>
+            )}
           </View>
-        </BottomSheetView>
+          <H h={24} />
+        </BottomSheetScrollView>
       </BottomSheetModal>
     );
   },
@@ -198,7 +210,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 24,
+    paddingHorizontal: 24,
+    paddingTop: 8,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
   },
@@ -207,7 +220,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 8,
+    paddingHorizontal: 32,
+    paddingTop: 24,
   },
   caption: {
     paddingVertical: 4,

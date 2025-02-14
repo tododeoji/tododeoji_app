@@ -28,11 +28,12 @@ interface CategoryScreenProps {
 }
 
 function CategoryScreen({ navigation }: CategoryScreenProps) {
-  const { setRef, closeCategorySheet, openCategorySheet, setData } = useBottomSheetStore();
+  const { setRef, closeCategorySheet, openCategorySheet } = useBottomSheetStore();
   const categorySheetRef = useRef<BottomSheetModal>(null);
   const insets = useSafeAreaInsets();
   const [categories, setCategories] = useState<CategoryItem[]>(mockCategoryList);
   const isActiveShared = useSharedValue(false);
+  const [selectedItem, setSelectedItem] = useState<CategoryItem | undefined>();
 
   useFocusEffect(
     useCallback(() => {
@@ -83,7 +84,6 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
             {
               scale: withTiming(isActive ? 1.05 : 1, {
                 duration: 100,
-                // easing: Easing.linear,
               }),
             },
           ],
@@ -116,7 +116,7 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
           <Pressable
             onPress={() => {
               console.log(item);
-              setData(item);
+              setSelectedItem(item);
               openCategorySheet(categorySheetRef);
             }}
             style={{ flex: 1 }}
@@ -165,9 +165,14 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
           onDragEnd={onDragEnd}
           ListFooterComponent={<H h={insets.bottom ? insets.bottom + 50 : 70} />}
         />
-        <AddFloatingButton insetsBottom={insets.bottom} />
+        <AddFloatingButton onPress={() => setSelectedItem(undefined)} insetsBottom={insets.bottom} />
       </View>
-      <CreateCategorySheet ref={categorySheetRef} onCloseSheet={closeCategorySheet} insetsBottom={insets.bottom} />
+      <CreateCategorySheet
+        data={selectedItem}
+        ref={categorySheetRef}
+        onCloseSheet={closeCategorySheet}
+        insetsBottom={insets.bottom}
+      />
     </>
   );
 }
