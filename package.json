@@ -8,14 +8,18 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
-    "build-android": "cd android && ./gradlew clean && ./gradlew assembleRelease && ./gradlew bundleRelease && open . && cd .."
+    "build-android": "cd android && ./gradlew clean && ./gradlew assembleRelease && ./gradlew bundleRelease && open . && cd ..",
+    "postinstall": "patch-package"
   },
   "dependencies": {
+    "@gorhom/bottom-sheet": "^5",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/material-top-tabs": "^7.1.0",
     "@react-navigation/native": "^7.0.14",
     "@react-navigation/stack": "^7.1.1",
     "dayjs": "^1.11.13",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "react": "18.3.1",
     "react-hook-form": "^7.54.2",
     "react-native": "0.76.5",

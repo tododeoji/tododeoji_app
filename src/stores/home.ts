@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { TodoItem } from '../types/todo';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { CategoryItem } from '../data/mockCategoryList';
 
 interface SelectedDateStoreState {
   selectedDate: string;
@@ -38,4 +40,39 @@ export const useTodayListStore = create<TodayListStoreState>((set) => ({
   setTodoList: (todoList: TodoItem[]) => set({ todoList }),
   setProgressList: (progressList: TodoItem[]) => set({ progressList }),
   setDoneList: (doneList: TodoItem[]) => set({ doneList }),
+}));
+
+interface deleteTodoModalStoreState {
+  isVisible: boolean;
+  deleteItem?: TodoItem;
+  openDeleteTodoModal: () => void;
+  closeDeleteTodoModal: () => void;
+  setDeleteItem: (deleteItem: TodoItem) => void;
+}
+export const useDeleteTodoModalStore = create<deleteTodoModalStoreState>((set) => ({
+  isVisible: false,
+  openDeleteTodoModal: () => set({ isVisible: true }),
+  closeDeleteTodoModal: () => set({ isVisible: false }),
+  setDeleteItem: (deleteItem: TodoItem) => set({ deleteItem }),
+}));
+
+interface categorySheetStoreState {
+  ref?: React.RefObject<BottomSheetModal>;
+  data?: CategoryItem;
+  setRef: (ref: React.RefObject<BottomSheetModal>) => void;
+  setData: (data?: CategoryItem) => void;
+  openCategorySheet: (ref: React.RefObject<BottomSheetModal>) => void;
+  closeCategorySheet: (ref: React.RefObject<BottomSheetModal>) => void;
+}
+export const useBottomSheetStore = create<categorySheetStoreState>((set) => ({
+  setRef: (ref: React.RefObject<BottomSheetModal>) => set({ ref }),
+  setData: (data?: CategoryItem) => set({ data }),
+  openCategorySheet: (ref: React.RefObject<BottomSheetModal>) => {
+    console.log('openSheet');
+    ref?.current?.present();
+  },
+  closeCategorySheet: (ref: React.RefObject<BottomSheetModal>) => {
+    console.log('closeSheet');
+    ref?.current?.close();
+  },
 }));

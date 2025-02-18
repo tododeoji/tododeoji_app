@@ -41,14 +41,12 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
       easing: Easing.linear,
     });
   }, [isExpanded]);
-  console.log(selectedDate, dayjs(dayInfo.date).format('YYYY-MM-DD'));
   const todos = TodoDataList[dayjs(dayInfo.date).format('YYYY-MM-DD')]?.todos || [];
 
   const isToday = dayjs().format('YY-MM-DD') === dayjs(dayInfo.date).format('YY-MM-DD');
   const isSelected = selectedDate === dayjs(dayInfo.date).format('YYYY-MM-DD');
 
   const handleDayPress = () => {
-    console.log('Selected date:', dayjs(dayInfo.date).format('YYYY-MM-DD'));
     dayjs(dayInfo.date).format('YYYY-MM-DD') === selectedDate ? toggleExpanded() : setIsExpanded(false);
     setSelectedDate(dayjs(dayInfo.date).format('YYYY-MM-DD'));
   };
@@ -62,7 +60,7 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
         style={[
           styles.dayTextContainer,
           isToday && { backgroundColor: Color.gray1 },
-          isSelected && { backgroundColor: Color.yellow },
+          isSelected && { backgroundColor: Color.yellow, borderRadius: 12 },
         ]}
       >
         <Text style={{ color: dayInfo.disabled ? '#ccc' : '#000', textAlign: 'center' }}>

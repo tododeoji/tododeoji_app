@@ -1,20 +1,18 @@
-import React, { useCallback, useLayoutEffect, useState, useMemo } from 'react';
+import React, { useCallback, useLayoutEffect, useState, useMemo, useRef } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DraggableFlatList, { DragEndParams, RenderItemParams } from 'react-native-draggable-flatlist';
-import Animated, { useAnimatedStyle, withTiming, runOnJS, useSharedValue } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, withTiming, useSharedValue } from 'react-native-reanimated';
 
-import { H, NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
+import { AddFloatingButton, H, NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
 import { ArrowBack, MoveIcon } from '../../assets/icons';
 import { FontFamily, FontStyle } from '../../Common/Font';
 import Color from '../../Common/Color';
-
-interface CategoryItem {
-  id: string;
-  title: string;
-  color: string;
-  isHidden: boolean;
-}
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useBottomSheetStore } from '../../stores/home';
+import CreateCategorySheet from '../../Components/Modal/CreateCategorySheet';
+import { useFocusEffect } from '@react-navigation/native';
+import { CategoryItem, mockCategoryList } from '../../data/mockCategoryList';
 
 interface HeaderItem {
   id: string;
@@ -30,15 +28,18 @@ interface CategoryScreenProps {
 }
 
 function CategoryScreen({ navigation }: CategoryScreenProps) {
+  const { setRef, closeCategorySheet, openCategorySheet } = useBottomSheetStore();
+  const categorySheetRef = useRef<BottomSheetModal>(null);
   const insets = useSafeAreaInsets();
-  const [categories, setCategories] = useState<CategoryItem[]>([
-    { id: '1', title: '공부', color: '#FFD700', isHidden: false },
-    { id: '2', title: '회사', color: '#90EE90', isHidden: false },
-    { id: '3', title: '집', color: '#87CEEB', isHidden: false },
-    { id: '4', title: '중요', color: '#FFB6C1', isHidden: false },
-    { id: '5', title: '루틴', color: '#D3D3D3', isHidden: false },
-    { id: '6', title: '학교', color: '#98FB98', isHidden: true },
-  ]);
+  const [categories, setCategories] = useState<CategoryItem[]>(mockCategoryList);
+  const isActiveShared = useSharedValue(false);
+  const [selectedItem, setSelectedItem] = useState<CategoryItem | undefined>();
+
+  useFocusEffect(
+    useCallback(() => {
+      setRef(categorySheetRef);
+    }, []),
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -55,7 +56,6 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
   const isHeaderItem = (item: ListItem): item is HeaderItem => 'type' in item && item.type === 'header';
 
   const onDragEnd = useCallback(({ data }: DragEndParams<ListItem>) => {
-    'worklet';
     const hiddenHeaderIndex = data.findIndex((item) => item.id === 'hidden_header');
     const newCategories = data
       .filter((item): item is CategoryItem => !('type' in item))
@@ -63,7 +63,7 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
         ...item,
         isHidden: data.findIndex((dataItem) => dataItem.id === item.id) > hiddenHeaderIndex,
       }));
-    runOnJS(setCategories)(newCategories);
+    setCategories(newCategories);
   }, []);
 
   const EmptySection = useCallback(
@@ -75,20 +75,25 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
     [],
   );
 
-  const isActiveShared = useSharedValue(false);
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: withTiming(isActiveShared.value ? 1.05 : 1) }],
-    };
-  }, [isActiveShared.value]);
-
-  // 카테고리 item
   const renderItem = useCallback(
-    ({ item, drag }: RenderItemParams<ListItem>) => {
+    ({ item, drag, isActive }: RenderItemParams<ListItem>) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const animatedStyle = useAnimatedStyle(() => {
+        return {
+          transform: [
+            {
+              scale: withTiming(isActive ? 1.05 : 1, {
+                duration: 100,
+              }),
+            },
+          ],
+        };
+      }, [isActive]);
+
       if (isHeaderItem(item)) {
-        if (item.id === 'visible_header')
+        if (item.id === 'visible_header') {
           return item.isEmpty ? <EmptySection title={`${item.title}가 없어요.`} /> : null;
+        }
         return (
           <View style={[styles.headerContainer, item.id === 'hidden_header' && { marginTop: 40 }]}>
             <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1}>
@@ -108,16 +113,23 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
           >
             <MoveIcon />
           </Pressable>
-          <View style={{ flex: 1 }}>
+          <Pressable
+            onPress={() => {
+              console.log(item);
+              setSelectedItem(item);
+              openCategorySheet(categorySheetRef);
+            }}
+            style={{ flex: 1 }}
+          >
             <View style={styles.categoryItem}>
               <Text>{item.title}</Text>
-              <View style={[styles.colorDot, { backgroundColor: item.color }]} />
+              <View style={[styles.colorDot, { backgroundColor: Color.category[item.color] }]} />
             </View>
-          </View>
+          </Pressable>
         </Animated.View>
       );
     },
-    [animatedStyle, isActiveShared],
+    [isActiveShared],
   );
 
   const listData = useMemo(() => {
@@ -138,21 +150,30 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
 
   const keyExtractor = useCallback((item: ListItem) => item.id, []);
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1}>
-          사용 중인 카테고리
-        </Text>
-        <H h={8} />
+    <>
+      <View style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Text fontFamily={FontFamily.BOLD} fontStyle={FontStyle.caption1}>
+            사용 중인 카테고리
+          </Text>
+          <H h={8} />
+        </View>
+        <DraggableFlatList<ListItem>
+          data={listData}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          onDragEnd={onDragEnd}
+          ListFooterComponent={<H h={insets.bottom ? insets.bottom + 50 : 70} />}
+        />
+        <AddFloatingButton onPress={() => setSelectedItem(undefined)} insetsBottom={insets.bottom} />
       </View>
-      <DraggableFlatList<ListItem>
-        data={listData}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-        onDragEnd={onDragEnd}
-        ListFooterComponent={<H h={insets.bottom ? insets.bottom + 50 : 70} />}
+      <CreateCategorySheet
+        data={selectedItem}
+        ref={categorySheetRef}
+        onCloseSheet={closeCategorySheet}
+        insetsBottom={insets.bottom}
       />
-    </View>
+    </>
   );
 }
 

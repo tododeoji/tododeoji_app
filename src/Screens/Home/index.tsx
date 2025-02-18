@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Pressable, ViewStyle, DimensionValue } from 'react-native';
 import { Gesture, GestureDetector, GestureType, PanGestureHandler, ScrollView } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -12,11 +12,18 @@ import MainTodoList from '../../Components/Home/MainTodoList';
 import Color from '../../Common/Color';
 import { FontStyle } from '../../Common/Font';
 import { NavigateLeft, NavigateRight } from '../../assets/icons';
-import { useExpandedStore, useSelectedDateStore, useTodayListStore } from '../../stores/home';
+import { useBottomSheetStore, useExpandedStore, useSelectedDateStore, useTodayListStore } from '../../stores/home';
 import { fadeIn, fadeOut } from '../../lib/viewAnimation';
 import { TodoDataList } from '../../data/mockTodoList';
+import DeleteTodoModal from '../../Components/Modal/DeleteTodoModal';
+import UpdateTodoSheet from '../../Components/Modal/UpdateTodoSheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { useFocusEffect } from '@react-navigation/native';
 
 const HomeScreen = ({ navigation }: any) => {
+  const categorySheetRef = useRef<BottomSheetModal>(null);
+  const { setRef, closeCategorySheet } = useBottomSheetStore();
+
   const { setTodoList, setProgressList, setDoneList } = useTodayListStore();
   const changeMonthFadeAnim = useSharedValue(1);
 
@@ -45,11 +52,18 @@ const HomeScreen = ({ navigation }: any) => {
   }, [isExpanded]);
 
   useEffect(() => {
+    setRef(categorySheetRef);
     setSelectedDate(currentMonth.format('YYYY-MM-DD'));
     setTodoList(TodoDataList['2025-02-01']?.todos.filter((data) => data.state === 'todo') || []);
     setProgressList(TodoDataList['2025-02-01']?.todos.filter((data) => data.state === 'progress') || []);
     setDoneList(TodoDataList['2025-02-01']?.todos.filter((data) => data.state === 'done') || []);
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      setRef(categorySheetRef);
+    }, []),
+  );
 
   const getDaysInMonth = (date: dayjs.Dayjs) => {
     const year = date.year();
@@ -205,6 +219,13 @@ const HomeScreen = ({ navigation }: any) => {
         </GestureDetector>
       </Animated.View>
       {!isExpanded && <MainTodoList selectedDateTodos={selectedDateTodos} />}
+
+      <DeleteTodoModal />
+      <UpdateTodoSheet
+        ref={categorySheetRef}
+        onCloseSheet={() => closeCategorySheet(categorySheetRef)}
+        insetsBottom={insets.bottom}
+      />
     </>
   );
 };

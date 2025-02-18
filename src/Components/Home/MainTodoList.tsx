@@ -1,13 +1,12 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { Shadow } from 'react-native-shadow-2';
 
-import { H, Text } from '../Common';
+import { AddFloatingButton, H, Text } from '../Common';
 import Color from '../../Common/Color';
 import { TodoItem } from '../../types/todo';
 import TodoItemContainer from '../TodoItemContainer';
-import { DuzyIcon, FloatingAddIcon } from '../../assets/icons';
+import { DuzyIcon } from '../../assets/icons';
 
 export default function MainTodoList({ selectedDateTodos }: { selectedDateTodos: TodoItem[] }) {
   return (
@@ -26,27 +25,7 @@ export default function MainTodoList({ selectedDateTodos }: { selectedDateTodos:
           <Text color={Color.gray3}>할 일이 없어요.</Text>
         </View>
       )}
-      <Pressable
-        style={{
-          position: 'absolute',
-          bottom: 16,
-          right: 24,
-          borderRadius: 25,
-          width: 45,
-          height: 45,
-          flexDirection: 'row',
-          justifyContent: 'center',
-        }}
-        onPress={() => console.log('press Floating Button')}
-      >
-        <Shadow
-          distance={10}
-          offset={[0, 10]}
-          startColor={'#C8C8C8'}
-          style={{ borderRadius: 25, width: 30, height: 30 }}
-        />
-        <FloatingAddIcon width={50} height={50} style={{ position: 'absolute', top: 0, right: -3, zIndex: 100 }} />
-      </Pressable>
+      <AddFloatingButton />
     </View>
   );
 }

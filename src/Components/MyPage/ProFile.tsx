@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { Text } from '../Common';
 import { FontFamily, FontStyle } from '../../Common/Font';
@@ -40,7 +40,10 @@ function ProFile({ navigation }: { navigation: any }) {
               {mockProfile.bio}
             </Text>
           </View>
-          <Pressable style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+          <Pressable
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}
+            onPress={() => mockProfile.link && Linking.openURL(mockProfile.link)}
+          >
             <LinkIcon width={16} height={16} />
             <Text fontStyle={FontStyle.caption2} color={Color.blue}>
               {mockProfile.link}
