@@ -1,4 +1,8 @@
 {
   "name": "tododeoji_app",
-  "displayName": "tododeoji_app"
+  "displayName": "tododeoji_app",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-9754313600278594~7861873259",
+    "ios_app_id": "ca-app-pub-9754313600278594~1393539960"
+  }
 }
