@@ -2,11 +2,9 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
-import { View } from 'react-native';
-import { Text } from '../Components/Common';
+import { AuthPage, AuthWebView } from '../Screens/Auth';
 
-const Stack = createStackNavigator<{ auth: undefined }>();
+const Stack = createStackNavigator<{ auth: undefined; authweb: undefined }>();
 
 function AuthStackNavigator() {
   const navTheme = {
@@ -19,29 +17,10 @@ function AuthStackNavigator() {
   return (
     <NavigationContainer theme={navTheme}>
       <GestureHandlerRootView>
-        <BottomSheetModalProvider>
-          <Stack.Navigator>
-            <Stack.Screen
-              name="auth"
-              component={() => (
-                <View
-                  style={{
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    paddingHorizontal: 24,
-                    position: 'relative',
-                  }}
-                >
-                  <Text>Auth Screen</Text>
-                </View>
-              )}
-              options={{ animation: 'fade', headerShown: false }}
-            />
-          </Stack.Navigator>
-        </BottomSheetModalProvider>
+        <Stack.Navigator>
+          <Stack.Screen name="auth" component={AuthPage} options={{ animation: 'fade', headerShown: false }} />
+          <Stack.Screen name="authweb" component={AuthWebView} options={{ animation: 'fade' }} />
+        </Stack.Navigator>
       </GestureHandlerRootView>
     </NavigationContainer>
   );

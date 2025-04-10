@@ -18,8 +18,18 @@ import ProgressIcon from './Progress';
 import DoneIcon from './Done';
 import FloatingAddIcon from './floating-add.svg';
 import DuzyIcon from './duzy.svg';
+import KakaoIcon from './kakao.svg';
+import NaverIcon from './naver.svg';
+import AppleIcon from './apple.svg';
+import GoogleIcon from './google.svg';
+import RecentLoginIcon from './recent-login.svg';
 
 export {
+  RecentLoginIcon,
+  GoogleIcon,
+  AppleIcon,
+  NaverIcon,
+  KakaoIcon,
   DuzyIcon,
   FloatingAddIcon,
   DoneIcon,
