@@ -1,8 +1,10 @@
 import React from 'react';
 import { ConfirmButton, CustomModal } from '../Common';
 import Color from '../../Common/Color';
+import { useLoginStatus } from '../../stores/auth';
 
 function LogoutModal({ isVisible, closeModal }: { isVisible: boolean; closeModal: () => void }) {
+  const { setIsLoggedIn } = useLoginStatus();
   return (
     <CustomModal
       isVisible={isVisible}
@@ -17,7 +19,7 @@ function LogoutModal({ isVisible, closeModal }: { isVisible: boolean; closeModal
           color={Color.black}
           backgroundColor={Color.white}
           onPressButton={() => {
-            console.log('로그아웃');
+            setIsLoggedIn(false);
             closeModal();
           }}
         />
