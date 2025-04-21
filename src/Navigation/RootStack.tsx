@@ -1,18 +1,22 @@
 import MainRootStackNavigator from './MainRootStack';
 import AuthStackNavigator from './AuthStack';
 import { useLoginStatus } from '../stores/auth';
-import { MMKV } from 'react-native-mmkv';
 import { useEffect } from 'react';
-export const storage = new MMKV();
+import { storage, getStorageData } from '../lib/mmkv';
 
 function RootStackNavigator() {
   const { isLoggedIn, setIsLoggedIn } = useLoginStatus();
 
   useEffect(() => {
-    const userInfo = storage.getString('userToken');
-    console.log(userInfo?.length ? '값 있음' : '없음', userInfo);
+    const userInfo = getStorageData('userToken');
+    console.log(Object.keys(userInfo).length > 1 ? '토큰 있음' : '토큰 없음', userInfo, typeof userInfo);
 
-    userInfo?.length ? setIsLoggedIn(true) : setIsLoggedIn(false);
+    if (Object.keys(userInfo).length > 1) {
+      const { accessTokenExp, refreshTokenExp } = userInfo;
+      console.log(accessTokenExp, refreshTokenExp);
+    }
+
+    Object.keys(userInfo).length > 1 ? setIsLoggedIn(true) : setIsLoggedIn(false);
   }, [storage]);
 
   return isLoggedIn ? <MainRootStackNavigator /> : <AuthStackNavigator />;

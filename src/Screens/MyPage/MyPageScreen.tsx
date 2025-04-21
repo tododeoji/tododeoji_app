@@ -1,15 +1,30 @@
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { H, Text } from '../../Components/Common';
 import Color from '../../Common/Color';
 import ProFile from '../../Components/MyPage/ProFile';
 import { BoxIcon } from '../../assets/icons';
+import { Axios } from '../../lib/axios';
+import { BASE_URL } from '@env';
 
 interface MyPageScreenProps {
   navigation: any;
 }
 
 function MyPageScreen({ navigation }: MyPageScreenProps) {
+  const getProfileData = async () => {
+    console.log(BASE_URL + '/my');
+    try {
+      const res = await Axios.get('/my');
+      console.log(res);
+    } catch (e) {
+      console.log(e);
+      console.error(e);
+    }
+  };
+  useLayoutEffect(() => {
+    getProfileData();
+  }, []);
   return (
     <View style={styles.Container}>
       <ProFile navigation={navigation} />

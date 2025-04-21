@@ -1,10 +1,9 @@
 import React, { useLayoutEffect, useRef } from 'react';
-import { Alert, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import WebView from 'react-native-webview';
 import { useLoginStatus } from '../../stores/auth';
 import { BASE_URL } from '@env';
-import { MMKV } from 'react-native-mmkv';
-export const storage = new MMKV();
+import { storage } from '../../lib/mmkv';
 
 function AuthPage({ navigation, route }: { navigation?: any; route?: any }) {
   const webViewRef = useRef<WebView>(null);
@@ -41,8 +40,8 @@ function AuthPage({ navigation, route }: { navigation?: any; route?: any }) {
       }}
       onMessage={(event) => {
         const { type, data } = JSON.parse(event.nativeEvent.data);
-        if (type === 'AUTH_RESULT' && data) {
-          console.log(data);
+        if (type === 'AUTH_RESULT' && data.charAt(0) === '{') {
+          console.log(data, typeof data);
           const result = JSON.parse(data);
 
           const userToken = {
