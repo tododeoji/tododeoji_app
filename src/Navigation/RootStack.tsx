@@ -1,22 +1,30 @@
-import MainRootStackNavigator from './MainRootStack';
-import AuthStackNavigator from './AuthStack';
-import { useLoginStatus } from '../stores/auth';
 import { useEffect } from 'react';
-import { storage, getStorageData } from '../lib/mmkv';
+import MainRootStackNavigator from '@/Navigation/MainRootStack';
+import AuthStackNavigator from '@/Navigation/AuthStack';
+import { useLoginStatus } from '@/stores/auth';
+import { storage, getStorageData } from '@/lib/mmkv';
+import dayjs from 'dayjs';
 
 function RootStackNavigator() {
   const { isLoggedIn, setIsLoggedIn } = useLoginStatus();
 
   useEffect(() => {
     const userInfo = getStorageData('userToken');
-    console.log(Object.keys(userInfo).length > 1 ? '토큰 있음' : '토큰 없음', userInfo, typeof userInfo);
 
     if (Object.keys(userInfo).length > 1) {
-      const { accessTokenExp, refreshTokenExp } = userInfo;
-      console.log(accessTokenExp, refreshTokenExp);
-    }
+      const { accessTokenExp } = userInfo;
 
-    Object.keys(userInfo).length > 1 ? setIsLoggedIn(true) : setIsLoggedIn(false);
+      console.log(dayjs(accessTokenExp).isAfter(dayjs()), dayjs(accessTokenExp), dayjs());
+      if (dayjs(accessTokenExp).isAfter(dayjs())) {
+        setIsLoggedIn(true);
+      } else {
+        console.log('토큰 만료');
+        storage.delete('userToken');
+        setIsLoggedIn(false);
+      }
+    } else {
+      setIsLoggedIn(false);
+    }
   }, [storage]);
 
   return isLoggedIn ? <MainRootStackNavigator /> : <AuthStackNavigator />;

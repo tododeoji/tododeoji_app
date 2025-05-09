@@ -1,12 +1,12 @@
 import React, { useRef } from 'react';
 import { StyleSheet, View, Pressable } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
-import { Text } from './Common';
-import { FontStyle } from '../Common/Font';
-import Color from '../Common/Color';
-import { DoneIcon, ProgressIcon, TodoIcon } from '../assets/icons';
-import { TodoItem } from '../types/todo';
-import { useDeleteTodoModalStore } from '../stores/home';
+import { Text } from '@/Components/Common';
+import { FontStyle } from '@/Common/Font';
+import Color from '@/Common/Color';
+import { DoneIcon, ProgressIcon, TodoIcon } from '@/assets/icons';
+import { TodoItem } from '@/types/todo';
+import { useDeleteTodoModalStore } from '@/stores/home';
 
 interface TodoItemProps {
   todo: TodoItem;

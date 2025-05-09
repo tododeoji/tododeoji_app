@@ -52,6 +52,7 @@ function AuthPage({ navigation, route }: { navigation?: any; route?: any }) {
           };
 
           storage.set('userToken', JSON.stringify(userToken));
+          storage.set('recent_login_platform', route.params?.platform?.toLowerCase());
           setIsLoggedIn(true);
         }
       }}
