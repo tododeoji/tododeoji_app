@@ -2,7 +2,7 @@ import React, { useCallback, useLayoutEffect, useState, useMemo, useRef } from '
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DraggableFlatList, { DragEndParams, RenderItemParams } from 'react-native-draggable-flatlist';
-import Animated, { useAnimatedStyle, withTiming, useSharedValue } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, withTiming, useSharedValue, Easing } from 'react-native-reanimated';
 
 import { AddFloatingButton, H, NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
 import { ArrowBack, MoveIcon } from '../../assets/icons';
@@ -82,11 +82,18 @@ function CategoryScreen({ navigation }: CategoryScreenProps) {
         return {
           transform: [
             {
-              scale: withTiming(isActive ? 1.05 : 1, {
-                duration: 100,
+              scale: withTiming(isActive ? 1.03 : 1, {
+                duration: 150,
+                easing: Easing.bezier(0.4, 0.0, 0.2, 1),
               }),
             },
           ],
+          shadowOpacity: withTiming(isActive ? 0.2 : 0, {
+            duration: 150,
+          }),
+          shadowRadius: withTiming(isActive ? 8 : 0, {
+            duration: 150,
+          }),
         };
       }, [isActive]);
 

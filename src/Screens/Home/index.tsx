@@ -111,7 +111,7 @@ const HomeScreen = ({ navigation }: any) => {
     setCurrentMonth(currentMonth.subtract(1, 'month'));
     setTimeout(() => {
       fadeIn(changeMonthFadeAnim);
-    }, 100);
+    }, 150);
   };
 
   const setNextMonth = () => {
@@ -119,7 +119,7 @@ const HomeScreen = ({ navigation }: any) => {
     setCurrentMonth(currentMonth.add(1, 'month'));
     setTimeout(() => {
       fadeIn(changeMonthFadeAnim);
-    }, 100);
+    }, 150);
   };
 
   const animatedStyle = useAnimatedStyle(() => {

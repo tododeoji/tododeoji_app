@@ -37,8 +37,8 @@ function CalendarDayContainer({ dayInfo, dayCount, TodoDataList }: CalendarDayCo
   useEffect(() => {
     setShowItemCount(isExpanded ? 6 : 4);
     animationProgress.value = withTiming(isExpanded ? 1 : 0, {
-      duration: 200,
-      easing: Easing.linear,
+      duration: 300,
+      easing: Easing.bezier(0.4, 0.0, 0.2, 1),
     });
   }, [isExpanded]);
   const todos = TodoDataList[dayjs(dayInfo.date).format('YYYY-MM-DD')]?.todos || [];
