@@ -1,7 +1,7 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import * as ImagePicker from 'react-native-image-picker';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View, Alert } from 'react-native';
 import { H, NavigationHeader, Text, TouchableSVG } from '../../Components/Common';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CameraIcon, CloseIcon } from '../../assets/icons';
@@ -10,14 +10,16 @@ import { FontFamily, FontStyle } from '../../Common/Font';
 import Color from '../../Common/Color';
 import { setRandomProfile } from '../../lib/randomProfile';
 import FormBox from '../../Components/MyPage/FormBox';
+import useProfileStore from '../../stores/profileStore';
+import { Axios } from '../../lib/axios';
 
 type ProfileFormData = {
-  profileUrl?: string;
-  defaultProfileNum: number;
-  name: string;
+  id: string;
   email: string;
-  bio?: string;
-  link?: string;
+  name: string;
+  profileImgUrl?: string;
+  introduce?: string;
+  profileUrl?: string;
 };
 
 interface EditProfileScreenProps {
@@ -25,15 +27,8 @@ interface EditProfileScreenProps {
 }
 
 function EditProfileScreen({ navigation }: EditProfileScreenProps) {
-  const mockProfile = {
-    profileUrl: '',
-    defaultProfileNum: 1,
-    name: '두지',
-    email: 'duzy@email.com',
-    bio: '안녕하세요 저는 두지예요 귀엽쬬',
-    link: 'https://testduzy.com',
-  };
-  const [defaultProfileNumber, setDefaultProfileNumber] = useState<number>(mockProfile.defaultProfileNum);
+  const { profileData, updateProfileData } = useProfileStore();
+  const [defaultProfileNumber, setDefaultProfileNumber] = useState<number>(profileData?.defaultProfileNum || 1);
   const [defaultProfileColor, setDefaultProfileColor] = useState<number>();
 
   const {
@@ -43,10 +38,12 @@ function EditProfileScreen({ navigation }: EditProfileScreenProps) {
     formState: { errors },
   } = useForm<ProfileFormData>({
     defaultValues: {
-      name: mockProfile.name,
-      bio: mockProfile.bio,
-      profileUrl: mockProfile.profileUrl,
-      link: mockProfile.link,
+      id: profileData?.id || '',
+      email: profileData?.email || '',
+      name: profileData?.name || '',
+      profileImgUrl: profileData?.profileImgUrl || '',
+      introduce: profileData?.introduce || '',
+      profileUrl: profileData?.profileUrl || '',
     },
   });
 
@@ -87,16 +84,30 @@ function EditProfileScreen({ navigation }: EditProfileScreenProps) {
         onChange(result.assets[0].uri);
       } else if (result.errorMessage) {
         console.error('이미지 선택 오류:', result.errorMessage);
-        // TODO: 사용자에게 에러 메시지 표시
       }
     } catch (error) {
       console.error('이미지 선택 중 오류 발생:', error);
-      // TODO: 사용자에게 에러 메시지 표시
     }
   };
 
-  const onSubmitForm = (data: ProfileFormData) => {
-    console.log({ ...data, defaultProfileNumber });
+  const onSubmitForm = async (data: ProfileFormData) => {
+    try {
+      const response = await Axios.patch('/user/edit', {
+        ...data,
+      });
+
+      if (response.data) {
+        updateProfileData({
+          ...data,
+        });
+        navigation.goBack();
+      }
+    } catch (error: any) {
+      console.error('프로필 수정 중 오류 발생:', error);
+      Alert.alert('프로필 수정 실패', error.message || '프로필 수정 중 오류가 발생했습니다. 다시 시도해주세요.', [
+        { text: '확인' },
+      ]);
+    }
   };
 
   return (
@@ -104,7 +115,7 @@ function EditProfileScreen({ navigation }: EditProfileScreenProps) {
       <View style={{ width: '100%', flexDirection: 'column', alignItems: 'center' }}>
         <Controller
           control={control}
-          name="profileUrl"
+          name="profileImgUrl"
           render={({ field: { onChange, value } }) => (
             <Pressable onPress={() => handleImagePicker(onChange)}>
               <FastImage source={value ? { uri: value } : defaultProfileColor} style={styles.ProfileImg} />
@@ -145,7 +156,7 @@ function EditProfileScreen({ navigation }: EditProfileScreenProps) {
           />
           <Controller
             control={control}
-            name="link"
+            name="profileUrl"
             rules={{
               pattern: {
                 value: /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
@@ -153,20 +164,20 @@ function EditProfileScreen({ navigation }: EditProfileScreenProps) {
               },
             }}
             render={({ field: { onChange, value } }) => (
-              <FormBox label="URL" placeholder="URL 입력" value={value} error={errors.link} onChange={onChange} />
+              <FormBox label="URL" placeholder="URL 입력" value={value} error={errors.profileUrl} onChange={onChange} />
             )}
           />
 
           <Controller
             control={control}
-            name="bio"
+            name="introduce"
             rules={{ maxLength: { value: 50, message: '소개글은 최대 50글자에요.' } }}
             render={({ field: { onChange, value } }) => (
               <FormBox
                 label="소개글"
                 placeholder="소개글 입력"
                 value={value}
-                error={errors.bio}
+                error={errors.introduce}
                 onChange={onChange}
                 countText={50}
               />
