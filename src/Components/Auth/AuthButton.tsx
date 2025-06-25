@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Text } from '../../Components/Common';
-import { FontFamily, FontStyle } from '../../Common/Font';
-import Color from '../../Common/Color';
 import { SvgProps } from 'react-native-svg';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
-import { RecentLoginIcon } from '../../assets/icons';
+import { Text } from '@/Components/Common';
+import { FontFamily, FontStyle } from '@/Common/Font';
+import Color from '@/Common/Color';
+import { RecentLoginIcon } from '@/assets/icons';
+import { storage } from '@/lib/mmkv';
 
 interface AuthButtonProps {
   platform: string;
@@ -16,7 +17,7 @@ interface AuthButtonProps {
 }
 
 export default function AuthButton({ platform, Icon, color, fontColor, navigation }: AuthButtonProps) {
-  const recentLoginPlatform = 'apple';
+  const recentLoginPlatform = storage.getString('recent_login_platform');
   const capitalize = (word: string) => {
     return word.charAt(0).toUpperCase() + word.slice(1);
   };
